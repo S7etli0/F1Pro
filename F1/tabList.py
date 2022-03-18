@@ -1,4 +1,19 @@
-def listSet(curs):
+import mysql.connector as con
+
+mydb = con.connect(
+    host="localhost",
+    user="root",
+    passwd="Slav7528dokumape"
+)
+
+def listSetRows(ref,check):
+    if check == True:
+        curs = mydb.cursor()
+        curs.execute("USE formula1db")
+        curs.execute("SELECT * FROM " + ref)
+    else:
+        curs = ref
+
     cellsdata = []
     vertic = []
     for x in curs:
