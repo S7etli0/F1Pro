@@ -12,7 +12,7 @@ from F1.images import tabImage
 from F1.css import css_Style
 from F1.loader import MultipleData
 from F1.dataScrape import WebScrape
-from F1.tabList import listSet
+from F1.tabList import listSetRows
 from F1.height import tabHeight
 from F1.teams import TeamContent
 from F1.loadBar import progressload
@@ -20,6 +20,8 @@ from F1.adjustLay import adjustLay
 from F1.deleteTable import eraseTab
 from F1.asktoSave import SQLsave
 from F1.dataSorter import sortData
+from F1.tableFiller import fillTable
+from F1.headerSQL import setSQLheader
 from F1.goingBack import backtoSQL
 
 mydb = con.connect( 
@@ -36,6 +38,7 @@ mydb = con.connect(
 # descriptions
 # set values
 # request + soup
+# id to order
 # classes
 
 
@@ -224,7 +227,7 @@ class DataF1Table(QWidget):
             for i in range(self.rows):
                 vertic.append(str(i + 1))
 
-            self.fillTable(self.rows, self.cols, self.content, self.tabheader, vertic)
+            fillTable(self.table, self.rows, self.cols, self.content, self.tabheader, vertic)
             tabHeight(self, self.rows)
             self.TableWidth()
         self.goBack()
@@ -298,21 +301,13 @@ class DataF1Table(QWidget):
             self.ref = self.listvar + "_" + str(self.yearlist.currentText())
             self.deltab = self.ref
 
-            curs = mydb.cursor()
-            curs.execute("SELECT * FROM " + self.ref)
+            cellsdata,vertic,self.rows = listSetRows(self.ref,True)
 
-            cellsdata,vertic,self.rows = listSet(curs)
             if self.tablemade != False:
                 self.tablay.removeWidget(self.tabwid)
             self.makeTable()
 
-            self.colname = []
-            curs = mydb.cursor()
-            curs.execute("SHOW COLUMNS FROM " + self.ref)
-            for x in curs:
-                self.colname.append(list(x)[0])
-            self.colname.pop(0)
-            self.cols = len(self.colname)
+            self.colname,self.cols = setSQLheader(self.ref)
 
             tabImage(self.listvar.replace("_", "-"), 2, self.introlbl)
             mytitle = self.ref.split("_")
@@ -325,7 +320,7 @@ class DataF1Table(QWidget):
             self.erase.setVisible(True)
             self.eraselbl.setVisible(True)
 
-            self.fillTable(self.rows, self.cols, cellsdata, self.colname, vertic)
+            fillTable(self.table, self.rows, self.cols, cellsdata, self.colname, vertic)
             self.TableWidth()
 
             if self.listvar!=self.changer:
@@ -414,32 +409,6 @@ class DataF1Table(QWidget):
         self.table.setFixedHeight(340)
 
 
-    def fillTable(self, tabrow, tabcol, filler, myheader, vertic):
-        self.table.setRowCount(tabrow)
-        self.table.setColumnCount(tabcol)
-        self.table.setVerticalHeaderLabels(vertic)
-
-        color = QColor(190,190,190)
-        for rw in range(tabrow):
-            for cl in range(tabcol):
-                self.table.setItem(rw, cl, QTableWidgetItem(str(filler[rw][cl])))
-                if rw%2 == 0:
-                    self.table.item(rw, cl).setBackground(color)
-
-        style = "::section {background-color: red; color:white; font-size: 12pt; font-weight:bold;}"
-
-        header = self.table.horizontalHeader()
-        header.setFixedHeight(40)
-        self.table.setHorizontalHeaderLabels(myheader)
-        header.setDefaultAlignment(Qt.AlignHCenter)
-        header.setStyleSheet(style)
-
-        sidehead = self.table.verticalHeader()
-        sidehead.setFixedWidth(35)
-        sidehead.setDefaultAlignment(Qt.AlignCenter)
-        sidehead.setStyleSheet(style)
-
-
     def TableWidth(self):
         header = self.table.horizontalHeader()
         tabcol = len(header)
@@ -481,8 +450,8 @@ class DataF1Table(QWidget):
 
         sorter = self.sortbox.currentText()
         curs = sortData(sorter,self.ref,direct)
-        cellsdata,vertic,rows = listSet(curs)
-        self.fillTable(rows, self.cols, cellsdata, self.colname, vertic)
+        cellsdata,vertic,rows = listSetRows(curs,False)
+        fillTable(self.table,rows, self.cols, cellsdata, self.colname, vertic)
 
 
     def makeDB(self):
