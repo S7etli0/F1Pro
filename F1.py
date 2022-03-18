@@ -8,15 +8,19 @@ from PyQt5.QtWidgets import QWidget, QTabWidget, QApplication, QProgressBar, QSc
     QTableWidget, QTableWidgetItem, QHeaderView, QGridLayout, QVBoxLayout, QHBoxLayout, \
     QPushButton, QRadioButton, QButtonGroup, QLabel, QComboBox, QSpinBox, QMessageBox
 
-from F1Pro.F1.F1images import tabImage
-from F1Pro.F1.F1css import css_Style
-from F1Pro.F1.F1Loader import MultipleData
-from F1Pro.F1.F1dataScrape import WebScrape
-from F1Pro.F1.F1TabList import listSet
-from F1Pro.F1.F1Height import tabHeight
-from F1Pro.F1.F1Teams import TeamContent
-from F1Pro.F1.F1LoadBar import progressload
-from F1Pro.F1.F1adjustLay import adjustLay
+from F1.images import tabImage
+from F1.css import css_Style
+from F1.loader import MultipleData
+from F1.dataScrape import WebScrape
+from F1.tabList import listSet
+from F1.height import tabHeight
+from F1.teams import TeamContent
+from F1.loadBar import progressload
+from F1.adjustLay import adjustLay
+from F1.deleteTable import eraseTab
+from F1.asktoSave import SQLsave
+from F1.dataSorter import sortData
+from F1.goingBack import backtoSQL
 
 mydb = con.connect( 
     host="localhost",
@@ -24,10 +28,9 @@ mydb = con.connect(
     passwd="Slav7528dokumape"
 )
 
+# readme.md & requirements
 # check whole page
 # pictures,font,align
-# Innertab layout, Keys
-# 1956, resize, sort
 # out methods, def
 # remove repeats
 # descriptions
@@ -68,6 +71,7 @@ class DataF1Table(QWidget):
         self.cols = 0
         self.tablemade = False
         self.sortbool = False
+        self.changer=""
         self.tablay = QVBoxLayout()
         self.sortlay = QHBoxLayout()
         self.sortlay.setAlignment(Qt.AlignCenter)
@@ -103,8 +107,8 @@ class DataF1Table(QWidget):
 
         loadwid = QWidget()
         loadwid.setLayout(self.layload)
-
         tabImage('menu', 4, self.layload)
+
         firstrow = QHBoxLayout()
         self.spinlbl = QLabel("Set year:")
         self.spinlbl.setObjectName("RedLab")
@@ -125,13 +129,14 @@ class DataF1Table(QWidget):
 
         btn = QPushButton("Load Data in Table")
         btn.setObjectName("Mar")
+        self.content = []
         btn.clicked.connect(self.race_results)
 
         tabImage('saves', 1, self.savelbl)
         self.savelbl.setVisible(False)
 
         self.savedata = QPushButton("Create SQL Table")
-        self.savedata.clicked.connect(self.SQLsave)
+        self.savedata.clicked.connect(lambda:SQLsave(self, self.spinyear, self.combo, self.content, self.tabheader))
         self.mainwid.addWidget(self.savedata)
         self.savedata.setVisible(False)
 
@@ -166,10 +171,10 @@ class DataF1Table(QWidget):
         if self.sortbool == True:
             adjustLay(self.sortlay,True)
             self.sorthide=True
+            self.sortbool = False
             self.sortwid.setVisible(False)
             self.erase.setVisible(False)
             self.eraselbl.setVisible(False)
-            self.sortbool = False
 
         calendar = int(self.spinyear.text())
         data = str(self.combo.currentText())
@@ -220,65 +225,9 @@ class DataF1Table(QWidget):
                 vertic.append(str(i + 1))
 
             self.fillTable(self.rows, self.cols, self.content, self.tabheader, vertic)
-
+            tabHeight(self, self.rows)
+            self.TableWidth()
         self.goBack()
-
-    def SQLsave(self):
-        self.makeDB()
-        calendar = int(self.spinyear.text())
-        data = str(self.combo.currentText())
-
-        name = (data + " " + str(calendar)).replace(" ", "_")
-        ask = QMessageBox.question(self, "Saving Table", "Do you want to save table " + name + " ?",
-                                   QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
-
-        if ask == QMessageBox.Yes:
-
-            curs = mydb.cursor()
-            curs.execute("USE formula1db")
-            curs.execute("SHOW TABLES")
-
-            alltables = []
-            for x in curs:
-                clear = (str(x)[1:-1].replace(",", ""))
-                alltables.append(clear.replace("'", ""))
-            mydb.commit()
-
-            if name not in alltables:
-                self.createSQL(name)
-            else:
-                QMessageBox.about(self, "SQL error", "Table "+name+" is already in the database!")
-        else:
-            pass
-
-
-    def createSQL(self, name):
-        stock = []
-        curs = mydb.cursor()
-        curs.execute("USE formula1db")
-
-        curs.execute("CREATE TABLE IF NOT EXISTS " + name + " (id int PRIMARY KEY AUTO_INCREMENT)")
-        for x in range(self.cols):
-            curs.execute("ALTER TABLE " + name + " ADD " + self.tabheader[x] + " VARCHAR(125)")
-
-        rep = []
-        for x in range(self.cols):
-            rep.append("%s")
-
-        datatag = str(self.tabheader)[1:-1].replace("'", "")
-        datavalue = str(rep)[1:-1].replace("'", "")
-        formula = "INSERT INTO " + name + " (" + datatag + ") VALUES (" + datavalue + ")"
-
-        for x in range(self.rows):
-            line = []
-            for y in range(self.cols):
-                line.append(self.content[x][y])
-            stock.append(line)
-
-        curs.executemany(formula, stock)
-        mydb.commit()
-
-        QMessageBox.about(self, "SQL Table", "Table "+name+" was added to the database!")
 
 
     def getList(self):
@@ -323,7 +272,9 @@ class DataF1Table(QWidget):
         tabImage('btn-del', 1, self.eraselbl)
 
         self.erase = QPushButton("Erase SQL Table")
-        self.erase.clicked.connect(self.eraseTab)
+        year = str(self.yearlist.currentText())
+        self.deltab = self.listvar + "_" + year
+        self.erase.clicked.connect(lambda:eraseTab(self,self.deltab))
 
         addtoInnerLay = [twolinewid,btn,backbtn,clearlbl,self.eraselbl,self.erase]
         for item in addtoInnerLay:
@@ -336,17 +287,23 @@ class DataF1Table(QWidget):
 
     def getSQLtab(self):
 
-        self.sorthide = False
+        if self.sorthide != False:
+            self.sorthide = False
+            self.savedata.setVisible(False)
+            self.savelbl.setVisible(False)
+
         if len(self.allcontent) == 0:
             QMessageBox.about(self,"Empty Database","No tables are Saved in this Category!")
         else:
             self.ref = self.listvar + "_" + str(self.yearlist.currentText())
+            self.deltab = self.ref
+
             curs = mydb.cursor()
             curs.execute("SELECT * FROM " + self.ref)
 
             cellsdata,vertic,self.rows = listSet(curs)
             if self.tablemade != False:
-                self.tablay.removeWidget(self.tabwid) 
+                self.tablay.removeWidget(self.tabwid)
             self.makeTable()
 
             self.colname = []
@@ -365,14 +322,14 @@ class DataF1Table(QWidget):
             else:
                 self.titel.setText("List of the " + str(mytitle[0]).title() + " for the " + mytitle[1] + " Formula 1 Season")
 
-            self.savedata.setVisible(False)
-            self.savelbl.setVisible(False)
             self.erase.setVisible(True)
             self.eraselbl.setVisible(True)
 
             self.fillTable(self.rows, self.cols, cellsdata, self.colname, vertic)
+            self.TableWidth()
 
-            if self.sortbool == True:
+            if self.listvar!=self.changer:
+                self.changer = self.listvar
                 adjustLay(self.sortlay,True)
                 self.sortbool = False
 
@@ -408,6 +365,7 @@ class DataF1Table(QWidget):
 
 
     def goBack(self):
+
         adjustLay(self.innerlay,True)
         sqltitel = QLabel("Choose a Table Category")
         sqltitel.setObjectName("BlackLab")
@@ -430,6 +388,10 @@ class DataF1Table(QWidget):
 
         adjustLay(self.innerlay,False)
 
+        # adjustLay(self.innerlay,True)
+        # backtoSQL(self.innerlay)
+        # adjustLay(self.innerlay,False)
+
     def makeTable(self):
         self.tablemade = True
         self.table = QTableWidget()
@@ -448,22 +410,8 @@ class DataF1Table(QWidget):
         self.scroll.setVisible(False)
         self.tablay.addWidget(self.tabwid)
 
-
-    def eraseTab(self):
-        year = str(self.yearlist.currentText())
-        deltab = self.listvar + "_" + year
-        ask = QMessageBox.question(self, "Delete Table", "Do you want to drop table " + deltab + " ?",
-                                   QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
-
-        if ask == QMessageBox.Yes:
-            curs = mydb.cursor()
-            curs.execute("USE formula1db")
-            curs.execute("DROP TABLE " + deltab)
-            mydb.commit()
-            QMessageBox.about(self, "Delete Table", "The table was erased from the database!")
-            self.goBack()
-        else:
-            pass
+        self.setFixedHeight(850)
+        self.table.setFixedHeight(340)
 
 
     def fillTable(self, tabrow, tabcol, filler, myheader, vertic):
@@ -490,6 +438,11 @@ class DataF1Table(QWidget):
         sidehead.setFixedWidth(35)
         sidehead.setDefaultAlignment(Qt.AlignCenter)
         sidehead.setStyleSheet(style)
+
+
+    def TableWidth(self):
+        header = self.table.horizontalHeader()
+        tabcol = len(header)
 
         max = 75
         for j in range(tabcol):
@@ -519,7 +472,6 @@ class DataF1Table(QWidget):
             self.table.setMinimumWidth(max)
             self.setFixedWidth(1050)
 
-        tabHeight(self,self.sorthide,tabrow)
 
     def sorting(self):
         if self.asc.isChecked():
@@ -528,15 +480,7 @@ class DataF1Table(QWidget):
             direct = self.des.text()
 
         sorter = self.sortbox.currentText()
-        curs = mydb.cursor()
-        curs.execute("USE formula1db")
-        if sorter == "date" or sorter == "id" or sorter == "points":
-            curs.execute("SELECT * FROM " + self.ref + " ORDER BY id" + " " + direct)
-        elif sorter == "laps":
-            curs.execute("SELECT * FROM " + self.ref + " ORDER BY ABS(" + sorter + ") " + direct)
-        else:
-            curs.execute("SELECT * FROM " + self.ref + " ORDER BY " + sorter + " " + direct)
-
+        curs = sortData(sorter,self.ref,direct)
         cellsdata,vertic,rows = listSet(curs)
         self.fillTable(rows, self.cols, cellsdata, self.colname, vertic)
 
