@@ -1,14 +1,10 @@
-import mysql.connector as con
 from PyQt5.QtWidgets import QMessageBox
-
-mydb = con.connect(
-    host="localhost",
-    user="root",
-    passwd="Slav7528dokumape"
-)
+from F1.mySQL import startSQL
 
 def createSQL(self, name, content, tabheader):
     stock = []
+    mydb = startSQL(False)
+
     curs = mydb.cursor()
     curs.execute("USE formula1db")
     cols = len(tabheader)

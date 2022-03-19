@@ -1,4 +1,4 @@
-def MultipleData(data):
+def loadingData(data):
     if data == "calendar" or data == "race wins":
         links = ['races']
         var = 8

@@ -1,12 +1,8 @@
-import mysql.connector as con
+from F1.mySQL import startSQL
 
-mydb = con.connect(
-    host="localhost",
-    user="root",
-    passwd="Slav7528dokumape"
-)
 
 def setSQLheader(ref):
+    mydb = startSQL(False)
     curs = mydb.cursor()
     curs.execute("USE formula1db")
 
@@ -18,7 +14,11 @@ def setSQLheader(ref):
     colname.pop(0)
     cols = len(colname)
 
+    mydb.commit()
+
     return colname, cols
+
+
 
 
     

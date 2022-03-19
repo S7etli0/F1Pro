@@ -1,15 +1,11 @@
-import mysql.connector as con
 from PyQt5.QtWidgets import QMessageBox
 from F1.makeSQLtab import createSQL
+from F1.mySQL import startSQL
 
-mydb = con.connect(
-    host="localhost",
-    user="root",
-    passwd="Slav7528dokumape"
-)
+mydb = startSQL(True)
 
 def SQLsave(self, spinyear, combo, content, tabheader):
-    self.makeDB()
+
     calendar = int(spinyear.text())
     data = str(combo.currentText())
 
@@ -35,3 +31,5 @@ def SQLsave(self, spinyear, combo, content, tabheader):
             QMessageBox.about(self, "SQL error", "Table " + name + " is already in the database!")
     else:
         pass
+
+    mydb.commit()

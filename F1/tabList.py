@@ -1,18 +1,12 @@
-import mysql.connector as con
+from F1.mySQL import startSQL
 
-mydb = con.connect(
-    host="localhost",
-    user="root",
-    passwd="Slav7528dokumape"
-)
+mydb = startSQL(False)
 
-def listSetRows(ref,check):
-    if check == True:
-        curs = mydb.cursor()
-        curs.execute("USE formula1db")
-        curs.execute("SELECT * FROM " + ref)
-    else:
-        curs = ref
+def listSetRows(ref):
+
+    curs = mydb.cursor()
+    curs.execute("USE formula1db")
+    curs.execute("SELECT * FROM " + ref)
 
     cellsdata = []
     vertic = []
@@ -20,5 +14,7 @@ def listSetRows(ref,check):
         cellsdata.append(x[1:len(x)])
         vertic.append(str(x[0]))
     rows = len(cellsdata)
+
+    mydb.commit()
 
     return cellsdata, vertic, rows

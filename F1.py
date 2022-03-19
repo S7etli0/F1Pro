@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import QWidget, QTabWidget, QApplication, QProgressBar, QSc
 
 from F1.images import tabImage
 from F1.css import css_Style
-from F1.loader import MultipleData
+from F1.loader import loadingData
 from F1.dataScrape import WebScrape
 from F1.tabList import listSetRows
 from F1.height import tabHeight
@@ -22,6 +22,8 @@ from F1.asktoSave import SQLsave
 from F1.dataSorter import sortData
 from F1.tableFiller import fillTable
 from F1.headerSQL import setSQLheader
+from F1.mySQL import startSQL
+from F1.allTabs import openTab
 from F1.goingBack import backtoSQL
 
 mydb = con.connect( 
@@ -139,7 +141,7 @@ class DataF1Table(QWidget):
         self.savelbl.setVisible(False)
 
         self.savedata = QPushButton("Create SQL Table")
-        self.savedata.clicked.connect(lambda:SQLsave(self, self.spinyear, self.combo, self.content, self.tabheader))
+        self.savedata.clicked.connect(self.saving)
         self.mainwid.addWidget(self.savedata)
         self.savedata.setVisible(False)
 
@@ -188,7 +190,7 @@ class DataF1Table(QWidget):
 
             self.savedata.setVisible(True)
             self.savelbl.setVisible(True)
-            links, var, self.tabheader, numbers = MultipleData(data)
+            links, var, self.tabheader, numbers = loadingData(data)
 
             for sector in links:
 
@@ -232,20 +234,10 @@ class DataF1Table(QWidget):
             self.TableWidth()
         self.goBack()
 
-
     def getList(self):
-        self.makeDB()
-        curs = mydb.cursor()
-        curs.execute("USE formula1db")
-        curs.execute("SHOW TABLES")
         listname = self.sender().text()
-
+        self.allcontent = openTab(listname)
         adjustLay(self.innerlay,True)
-        self.allcontent = []
-        for x in curs:
-            titel = str(x)[1:-1].replace(",", "")
-            if listname in titel:
-                self.allcontent.append(titel.replace("'", "")[len(titel) - 6:len(titel)])
 
         maintag = QLabel("Category " + str(listname).replace("_", " ").title() + " Tables")
         maintag.setObjectName("BlackLab")
@@ -277,7 +269,7 @@ class DataF1Table(QWidget):
         self.erase = QPushButton("Erase SQL Table")
         year = str(self.yearlist.currentText())
         self.deltab = self.listvar + "_" + year
-        self.erase.clicked.connect(lambda:eraseTab(self,self.deltab))
+        self.erase.clicked.connect(lambda:self.deletion(self,self.deltab))
 
         addtoInnerLay = [twolinewid,btn,backbtn,clearlbl,self.eraselbl,self.erase]
         for item in addtoInnerLay:
@@ -301,7 +293,7 @@ class DataF1Table(QWidget):
             self.ref = self.listvar + "_" + str(self.yearlist.currentText())
             self.deltab = self.ref
 
-            cellsdata,vertic,self.rows = listSetRows(self.ref,True)
+            cellsdata,vertic,self.rows = listSetRows(self.ref)
 
             if self.tablemade != False:
                 self.tablay.removeWidget(self.tabwid)
@@ -449,15 +441,20 @@ class DataF1Table(QWidget):
             direct = self.des.text()
 
         sorter = self.sortbox.currentText()
-        curs = sortData(sorter,self.ref,direct)
-        cellsdata,vertic,rows = listSetRows(curs,False)
+        cellsdata,vertic,rows = sortData(self.ref,sorter,direct)
         fillTable(self.table,rows, self.cols, cellsdata, self.colname, vertic)
 
+    def deletion(self, lay, tab):
+        ask = eraseTab(lay, tab)
+        if ask==True:
+            self.goBack()
+            self.sorthide=True
+            adjustLay(self.sortlay,True)
 
-    def makeDB(self):
-        curs = mydb.cursor()
-        curs.execute("CREATE DATABASE IF NOT EXISTS formula1db")
-        mydb.commit()
+    def saving(self):
+        SQLsave(self, self.spinyear, self.combo, self.content, self.tabheader)
+        self.goBack()
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

@@ -1,14 +1,10 @@
-import mysql.connector as con
+from F1.mySQL import startSQL
 
-mydb = con.connect(
-    host="localhost",
-    user="root",
-    passwd="Slav7528dokumape"
-)
+mydb = startSQL(False)
 
-
-def sortData(sorter,dataref,direct):
+def sortData(dataref,sorter,direct):
     curs = mydb.cursor()
+
     curs.execute("USE formula1db")
     if sorter == "date" or sorter == "id" or sorter == "points":
         curs.execute("SELECT * FROM " + dataref + " ORDER BY id" + " " + direct)
@@ -17,4 +13,14 @@ def sortData(sorter,dataref,direct):
     else:
         curs.execute("SELECT * FROM " + dataref + " ORDER BY " + sorter + " " + direct)
 
-    return curs
+    cellsdata = []
+    vertic = []
+    for x in curs:
+        cellsdata.append(x[1:len(x)])
+        vertic.append(str(x[0]))
+    rows = len(cellsdata)
+
+    mydb.commit()
+
+    return cellsdata, vertic, rows
+
