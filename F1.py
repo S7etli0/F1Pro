@@ -23,6 +23,9 @@ from F1.allTabs import openTab
 from F1.goingBack import backtoSQL
 from F1.setYear import setYearLbl
 from F1.makeCombo import setComboBox
+from F1.TableWidth import tabWidth
+from F1.sortOptions import sortItems
+from F1.raceData import getRaceData
 
 # readme.md & requirements
 # check whole page
@@ -178,24 +181,8 @@ class DataF1Table(QWidget):
 
                 table = WebScrape(calendar, sector)
                 progressload(self.loadtab)
-                self.content = []
+                self.content = getRaceData(table,data,var,numbers,sector)
 
-                for tabrow in table:
-                    racelist = tabrow.text.strip().replace("     ", "").split("\n")
-                    racelist = list(filter(lambda x: x != '', racelist))
-
-                    while len(racelist) < var:
-                        racelist.append("")
-                    rowdatas = []
-
-                    if data == "team ranks":
-                        teaminfo = TeamContent(sector,numbers,racelist,rowdatas)
-                        self.content.append(teaminfo)
-
-                    else:
-                        for cell in numbers:
-                            rowdatas.append(racelist[cell])
-                        self.content.append(rowdatas)
 
             if self.tablemade != False:
                 self.tablay.removeWidget(self.tabwid)
@@ -213,7 +200,8 @@ class DataF1Table(QWidget):
 
             fillTable(self.table, self.rows, self.cols, self.content, self.tabheader, vertic)
             tabHeight(self, self.rows)
-            self.TableWidth()
+            tabWidth(self,self.table,self.titel,self.scroll,self.tabwid)
+
         self.goBack()
 
     def getList(self):
@@ -293,7 +281,7 @@ class DataF1Table(QWidget):
             self.eraselbl.setVisible(True)
 
             fillTable(self.table, self.rows, self.cols, cellsdata, self.colname, vertic)
-            self.TableWidth()
+            tabWidth(self,self.table,self.titel,self.scroll,self.tabwid)
 
             if self.listvar!=self.changer:
                 self.changer = self.listvar
@@ -302,25 +290,8 @@ class DataF1Table(QWidget):
 
             if self.sortbool == False:
                 self.sortwid.setVisible(True)
-                sortlbl = QLabel("Sort Label:")
-                sortlbl.setObjectName("RedLab")
-                self.sortbox = QComboBox()
 
-                if "race" in self.ref:
-                    self.colname.append("id")
-                self.sortbox.addItems(self.colname)
-
-                order = QLabel("Order by:")
-                order.setObjectName("RedLab")
-                self.asc = QRadioButton("ASC")
-                self.asc.setChecked(True)
-                self.des = QRadioButton("DESC")
-                gr = QButtonGroup()
-                gr.addButton(self.asc)
-                gr.addButton(self.des)
-
-                sortbtn = QPushButton("  Sort Data  ")
-                sortbtn.setObjectName("RedBtn")
+                sortlbl, self.sortbox, order, self.asc, self.des, sortbtn = sortItems(self.colname, self.ref)
                 sortbtn.clicked.connect(self.sorting)
 
                 addtoSortlay = [sortlbl,self.sortbox,order,self.asc,self.des,sortbtn]
@@ -330,9 +301,7 @@ class DataF1Table(QWidget):
                 self.sortwid.setLayout(self.sortlay)
                 self.sortbool = True
 
-
     def goBack(self):
-
         adjustLay(self.innerlay,True)
         buttons = backtoSQL(self.innerlay)
         for btn in buttons:
@@ -344,7 +313,6 @@ class DataF1Table(QWidget):
         self.table = QTableWidget()
         self.table.setRowCount(self.rows)
         self.table.setColumnCount(self.cols)
-
         self.table.horizontalHeader().setStretchLastSection(True)
 
         self.tabwid = QWidget()
@@ -359,39 +327,6 @@ class DataF1Table(QWidget):
 
         self.setFixedHeight(850)
         self.table.setFixedHeight(340)
-
-
-    def TableWidth(self):
-        header = self.table.horizontalHeader()
-        tabcol = len(header)
-
-        max = 75
-        for j in range(tabcol):
-            self.table.resizeColumnToContents(j)
-            max += self.table.columnWidth(j)
-
-        if 'Calendar' in self.titel.text():
-            for i in range(tabcol):
-                header.setSectionResizeMode(i, QHeaderView.Stretch)
-            header.setSectionResizeMode(tabcol - 1, QHeaderView.ResizeToContents)
-
-        elif 'Team' in self.titel.text():
-            header.setSectionResizeMode(1, QHeaderView.Stretch)
-            header.setStretchLastSection(False)
-
-        else:
-            header.setSectionResizeMode(QHeaderView.ResizeToContents)
-
-        self.setGeometry(100,100,0,0)
-
-        if max <= 750:
-            self.tabwid.setMinimumWidth(max)
-            self.setFixedWidth(max + 350)
-        else:
-            self.scroll.setWidget(self.table)
-            self.scroll.setVisible(True)
-            self.table.setMinimumWidth(max)
-            self.setFixedWidth(1050)
 
 
     def sorting(self):
