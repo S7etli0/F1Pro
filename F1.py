@@ -1,6 +1,3 @@
-import datetime
-import mysql.connector as con
-
 import sys
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QColor
@@ -22,15 +19,10 @@ from F1.asktoSave import SQLsave
 from F1.dataSorter import sortData
 from F1.tableFiller import fillTable
 from F1.headerSQL import setSQLheader
-from F1.mySQL import startSQL
 from F1.allTabs import openTab
 from F1.goingBack import backtoSQL
-
-mydb = con.connect( 
-    host="localhost",
-    user="root",
-    passwd="Slav7528dokumape"
-)
+from F1.setYear import setYearLbl
+from F1.makeCombo import setComboBox
 
 # readme.md & requirements
 # check whole page
@@ -68,7 +60,6 @@ class DataF1Table(QWidget):
         self.savelbl = QLabel()
         self.layload = QVBoxLayout()
         self.introlbl = QLabel()
-
         self.goBack()
 
     def setMainTab(self):
@@ -81,7 +72,6 @@ class DataF1Table(QWidget):
         self.sortlay = QHBoxLayout()
         self.sortlay.setAlignment(Qt.AlignCenter)
 
-        self.sorthide=True
         self.sortwid = QWidget()
         self.sortwid.setObjectName("BlackWid")
 
@@ -115,20 +105,13 @@ class DataF1Table(QWidget):
         tabImage('menu', 4, self.layload)
 
         firstrow = QHBoxLayout()
-        self.spinlbl = QLabel("Set year:")
-        self.spinlbl.setObjectName("RedLab")
-        self.spinyear = QSpinBox()
-        year = datetime.datetime.now().strftime("%Y")
-        self.spinyear.setRange(1950, int(year) - 1)
+        self.spinlbl,self.spinyear = setYearLbl()
         firstrow.addWidget(self.spinlbl)
         firstrow.addWidget(self.spinyear)
 
         secrow = QHBoxLayout()
-        self.datalbl = QLabel("Set data:")
-        self.datalbl.setObjectName("RedLab")
-        self.combo = QComboBox()
         sections = ['calendar', 'race wins', 'driver ranks', 'team ranks']
-        self.combo.addItems(sections)
+        self.datalbl,self.combo = setComboBox(1,sections)
         secrow.addWidget(self.datalbl)
         secrow.addWidget(self.combo)
 
@@ -175,7 +158,6 @@ class DataF1Table(QWidget):
 
         if self.sortbool == True:
             adjustLay(self.sortlay,True)
-            self.sorthide=True
             self.sortbool = False
             self.sortwid.setVisible(False)
             self.erase.setVisible(False)
@@ -245,10 +227,8 @@ class DataF1Table(QWidget):
         self.innerlay.addWidget(maintag)
         tabImage('menues', 3, self.innerlay)
 
-        lbltag = QLabel("Select year:")
-        lbltag.setObjectName("BlackLab")
-        self.yearlist = QComboBox()
-        self.yearlist.addItems(self.allcontent)
+        lbltag, self.yearlist = setComboBox(2,self.allcontent)
+
         twoinone = QHBoxLayout()
         twoinone.addWidget(lbltag)
         twoinone.addWidget(self.yearlist)
@@ -269,7 +249,7 @@ class DataF1Table(QWidget):
         self.erase = QPushButton("Erase SQL Table")
         year = str(self.yearlist.currentText())
         self.deltab = self.listvar + "_" + year
-        self.erase.clicked.connect(lambda:self.deletion(self,self.deltab))
+        self.erase.clicked.connect(lambda:self.deletion())
 
         addtoInnerLay = [twolinewid,btn,backbtn,clearlbl,self.eraselbl,self.erase]
         for item in addtoInnerLay:
@@ -282,8 +262,8 @@ class DataF1Table(QWidget):
 
     def getSQLtab(self):
 
-        if self.sorthide != False:
-            self.sorthide = False
+        if self.sortbool != True:
+            self.sortbool = True
             self.savedata.setVisible(False)
             self.savelbl.setVisible(False)
 
@@ -293,16 +273,16 @@ class DataF1Table(QWidget):
             self.ref = self.listvar + "_" + str(self.yearlist.currentText())
             self.deltab = self.ref
 
-            cellsdata,vertic,self.rows = listSetRows(self.ref)
-
             if self.tablemade != False:
                 self.tablay.removeWidget(self.tabwid)
             self.makeTable()
 
+            cellsdata,vertic,self.rows = listSetRows(self.ref)
             self.colname,self.cols = setSQLheader(self.ref)
 
             tabImage(self.listvar.replace("_", "-"), 2, self.introlbl)
             mytitle = self.ref.split("_")
+
             if len(mytitle) > 2:
                 self.titel.setText(
                     "List of the " + str(mytitle[0] + " " + mytitle[1]).title() + " for the " + mytitle[2] + " Formula 1 Season")
@@ -354,30 +334,10 @@ class DataF1Table(QWidget):
     def goBack(self):
 
         adjustLay(self.innerlay,True)
-        sqltitel = QLabel("Choose a Table Category")
-        sqltitel.setObjectName("BlackLab")
-        sqltitel.setAlignment(Qt.AlignCenter)
-        self.innerlay.addWidget(sqltitel)
-        tabImage('menues', 3, self.innerlay)
-
-        sections = ['calendar', 'race_wins', 'driver_ranks', 'team_ranks']
-        btnlay = QVBoxLayout()
-        for x in sections:
-            btn = QPushButton(str(x))
-            btn.setObjectName("RedBtn")
+        buttons = backtoSQL(self.innerlay)
+        for btn in buttons:
             btn.clicked.connect(self.getList)
-            btnlay.addWidget(btn)
-
-        btnwid = QWidget()
-        btnwid.setObjectName("BlackWid")
-        btnwid.setLayout(btnlay)
-        self.innerlay.addWidget(btnwid)
-
         adjustLay(self.innerlay,False)
-
-        # adjustLay(self.innerlay,True)
-        # backtoSQL(self.innerlay)
-        # adjustLay(self.innerlay,False)
 
     def makeTable(self):
         self.tablemade = True
@@ -444,16 +404,17 @@ class DataF1Table(QWidget):
         cellsdata,vertic,rows = sortData(self.ref,sorter,direct)
         fillTable(self.table,rows, self.cols, cellsdata, self.colname, vertic)
 
-    def deletion(self, lay, tab):
-        ask = eraseTab(lay, tab)
+    def deletion(self):
+        ask = eraseTab(self,self.deltab)
         if ask==True:
             self.goBack()
-            self.sorthide=True
+            self.changer=""
             adjustLay(self.sortlay,True)
 
     def saving(self):
-        SQLsave(self, self.spinyear, self.combo, self.content, self.tabheader)
-        self.goBack()
+        ask = SQLsave(self, self.spinyear, self.combo, self.content, self.tabheader)
+        if ask == True:
+            self.goBack()
 
 
 if __name__ == '__main__':

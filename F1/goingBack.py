@@ -9,15 +9,18 @@ def backtoSQL(innerlay):
     innerlay.addWidget(sqltitel)
     tabImage('menues', 3, innerlay)
 
+    buttons = []
     sections = ['calendar', 'race_wins', 'driver_ranks', 'team_ranks']
     btnlay = QVBoxLayout()
     for x in sections:
         btn = QPushButton(str(x))
         btn.setObjectName("RedBtn")
-        btn.clicked.connect(self.getList)
         btnlay.addWidget(btn)
+        buttons.append(btn)
 
     btnwid = QWidget()
     btnwid.setObjectName("BlackWid")
     btnwid.setLayout(btnlay)
     innerlay.addWidget(btnwid)
+
+    return buttons

@@ -27,9 +27,13 @@ def SQLsave(self, spinyear, combo, content, tabheader):
 
         if name not in alltables:
             createSQL(self, name, content, tabheader)
+            ask = True
         else:
             QMessageBox.about(self, "SQL error", "Table " + name + " is already in the database!")
+            ask = False
     else:
-        pass
+        ask = False
+
+    return ask
 
     mydb.commit()
