@@ -1,9 +1,8 @@
 import sys
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon, QColor
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QTabWidget, QApplication, QProgressBar, QScrollArea, \
-    QTableWidget, QTableWidgetItem, QHeaderView, QGridLayout, QVBoxLayout, QHBoxLayout, \
-    QPushButton, QRadioButton, QButtonGroup, QLabel, QComboBox, QSpinBox, QMessageBox
+    QTableWidget, QGridLayout, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QMessageBox
 
 from F1.images import tabImage
 from F1.css import css_Style
@@ -11,7 +10,6 @@ from F1.loader import loadingData
 from F1.dataScrape import WebScrape
 from F1.tabList import listSetRows
 from F1.height import tabHeight
-from F1.teams import TeamContent
 from F1.loadBar import progressload
 from F1.adjustLay import adjustLay
 from F1.deleteTable import eraseTab
@@ -23,7 +21,7 @@ from F1.allTabs import openTab
 from F1.goingBack import backtoSQL
 from F1.setYear import setYearLbl
 from F1.makeCombo import setComboBox
-from F1.TableWidth import tabWidth
+from F1.tableWidth import tabWidth
 from F1.sortOptions import sortItems
 from F1.raceData import getRaceData
 
@@ -199,7 +197,7 @@ class DataF1Table(QWidget):
                 vertic.append(str(i + 1))
 
             fillTable(self.table, self.rows, self.cols, self.content, self.tabheader, vertic)
-            tabHeight(self, self.rows)
+            tabHeight(self, self.rows, self.sortbool)
             tabWidth(self,self.table,self.titel,self.scroll,self.tabwid)
 
         self.goBack()
@@ -321,12 +319,14 @@ class DataF1Table(QWidget):
         self.tabwid.setLayout(self.form)
 
         self.scroll = QScrollArea()
+        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.form.addWidget(self.scroll)
         self.scroll.setVisible(False)
         self.tablay.addWidget(self.tabwid)
 
-        self.setFixedHeight(850)
-        self.table.setFixedHeight(340)
+        if self.sortbool == True:
+            self.tabwid.setFixedHeight(370)
+        tabHeight(self, self.rows, self.sortbool)
 
 
     def sorting(self):
