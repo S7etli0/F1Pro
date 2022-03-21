@@ -47,40 +47,66 @@ class DataF1Table(QWidget):
         self.setWindowIcon(QIcon("images/f1-logo.png"))
         self.setGeometry(100, 100, 350, 350)
         self.setObjectName("RedWid")
-        self.sideSQLtab()
+        self.gridStructure()
+
+        self.mainVariables()
         self.setMainTab()
         self.sideWEBtab()
         self.show()
 
-    def sideSQLtab(self):
-        self.sqltabs = QWidget()
-        self.innerlay = QVBoxLayout()
-        self.sqltabs.setLayout(self.innerlay)
-
-        self.eraselbl = QLabel()
-        self.savelbl = QLabel()
+    def gridStructure(self):
+        loadwid = QWidget()
         self.layload = QVBoxLayout()
-        self.introlbl = QLabel()
+        loadwid.setLayout(self.layload)
+        tabImage('menu', 4, self.layload)
+
+        sqltabs = QWidget()
+        self.innerlay = QVBoxLayout()
+        sqltabs.setLayout(self.innerlay)
+
+        maintab = QTabWidget()
+        maintab.setMaximumWidth(270)
+        maintab.addTab(loadwid, "Load Data")
+        maintab.addTab(sqltabs, "View Data")
+
+        tabright = QWidget()
+        tabright.setObjectName("White")
+        self.mainwid = QVBoxLayout()
+        tabright.setLayout(self.mainwid)
+
+        mygrid = QGridLayout()
+        mygrid.addWidget(maintab, 0, 0)
+        mygrid.addWidget(tabright, 0, 1)
+        self.setLayout(mygrid)
+
         self.goBack()
 
-    def setMainTab(self):
+    def mainVariables(self):
+
         self.rows = 0
         self.cols = 0
         self.tablemade = False
         self.sortbool = False
         self.changer=""
-        self.tablay = QVBoxLayout()
-        self.sortlay = QHBoxLayout()
-        self.sortlay.setAlignment(Qt.AlignCenter)
+        
+        self.eraselbl = QLabel()
+        self.erase = QPushButton("Erase SQL Table")
+        self.erase.clicked.connect(lambda:self.deletion())
 
         self.sortwid = QWidget()
         self.sortwid.setObjectName("BlackWid")
+        self.sortlay = QHBoxLayout()
+        self.sortlay.setAlignment(Qt.AlignCenter)
 
-        self.mainwid = QVBoxLayout()
+
+    def setMainTab(self):
         self.titel = QLabel("The Results You are Looking For will Appear in a Table")
         self.titel.setAlignment(Qt.AlignCenter)
         self.titel.setObjectName("Titel")
+        
+        self.introlbl = QLabel()
         tabImage('startup', 2, self.introlbl)
+        self.tablay = QVBoxLayout()
 
         self.loadtab = QProgressBar()
         self.loadtab.setMinimum(0)
@@ -93,17 +119,7 @@ class DataF1Table(QWidget):
                 self.mainwid.addWidget(item)
             else: self.mainwid.addLayout(item)
 
-
     def sideWEBtab(self):
-        self.mygrid = QGridLayout()
-        self.tabright = QWidget()
-        self.tabright.setObjectName("White")
-        self.tabright.setLayout(self.mainwid)
-        self.mygrid.addWidget(self.tabright, 0, 1)
-
-        loadwid = QWidget()
-        loadwid.setLayout(self.layload)
-        tabImage('menu', 4, self.layload)
 
         firstrow = QHBoxLayout()
         self.spinlbl,self.spinyear = setYearLbl()
@@ -116,11 +132,19 @@ class DataF1Table(QWidget):
         secrow.addWidget(self.datalbl)
         secrow.addWidget(self.combo)
 
+        doubwid = QWidget()
+        doubwid.setObjectName("BlackWid")
+        doublay = QVBoxLayout()
+        doubwid.setLayout(doublay)
+        doublay.addLayout(firstrow)
+        doublay.addLayout(secrow)
+
         btn = QPushButton("Load Data in Table")
         btn.setObjectName("Mar")
         self.content = []
         btn.clicked.connect(self.race_results)
 
+        self.savelbl = QLabel()
         tabImage('saves', 1, self.savelbl)
         self.savelbl.setVisible(False)
 
@@ -129,31 +153,12 @@ class DataF1Table(QWidget):
         self.mainwid.addWidget(self.savedata)
         self.savedata.setVisible(False)
 
-        doubwid = QWidget()
-        doubwid.setObjectName("BlackWid")
-        doublay = QVBoxLayout()
-        doubwid.setLayout(doublay)
-
-        firstlay = QWidget()
-        firstlay.setLayout(firstrow)
-        seclay = QWidget()
-        seclay.setLayout(secrow)
-        doublay.addWidget(firstlay)
-        doublay.addWidget(seclay)
-
         clearlab = QLabel()
         addtoLayload = [doubwid,btn,clearlab,self.savelbl,self.savedata]
         for item in addtoLayload:
             self.layload.addWidget(item)
         self.layload.addStretch()
 
-        self.maintab = QTabWidget()
-        self.maintab.setMaximumWidth(270)
-        self.maintab.addTab(loadwid, "Load Data")
-        self.maintab.addTab(self.sqltabs, "View Data")
-        self.mygrid.addWidget(self.maintab, 0, 0)
-
-        self.setLayout(self.mygrid)
 
     def race_results(self):
 
@@ -232,10 +237,8 @@ class DataF1Table(QWidget):
         clearlbl = QLabel()
         tabImage('btn-del', 1, self.eraselbl)
 
-        self.erase = QPushButton("Erase SQL Table")
         year = str(self.yearlist.currentText())
         self.deltab = self.listvar + "_" + year
-        self.erase.clicked.connect(lambda:self.deletion())
 
         addtoInnerLay = [twolinewid,btn,backbtn,clearlbl,self.eraselbl,self.erase]
         for item in addtoInnerLay:
