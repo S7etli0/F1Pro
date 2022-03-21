@@ -11,7 +11,7 @@ from F1.dataScrape import WebScrape
 from F1.tabList import listSetRows
 from F1.height import tabHeight
 from F1.loadBar import progressload
-from F1.adjustLay import adjustLay
+from F1.adjustLay import clearLay, stretchLay
 from F1.deleteTable import eraseTab
 from F1.asktoSave import SQLsave
 from F1.dataSorter import sortData
@@ -163,7 +163,7 @@ class DataF1Table(QWidget):
     def race_results(self):
 
         if self.sortbool == True:
-            adjustLay(self.sortlay,True)
+            clearLay(self.sortlay)
             self.sortbool = False
             self.sortwid.setVisible(False)
             self.erase.setVisible(False)
@@ -210,7 +210,7 @@ class DataF1Table(QWidget):
     def getList(self):
         listname = self.sender().text()
         self.allcontent = openTab(listname)
-        adjustLay(self.innerlay,True)
+        clearLay(self.innerlay)
 
         maintag = QLabel("Category " + str(listname).replace("_", " ").title() + " Tables")
         maintag.setObjectName("BlackLab")
@@ -218,11 +218,11 @@ class DataF1Table(QWidget):
         self.innerlay.addWidget(maintag)
         tabImage('menues', 3, self.innerlay)
 
-        lbltag, self.yearlist = setComboBox(2,self.allcontent)
-
         twoinone = QHBoxLayout()
+        lbltag, self.yearlist = setComboBox(2,self.allcontent)
         twoinone.addWidget(lbltag)
         twoinone.addWidget(self.yearlist)
+
         twolinewid = QWidget()
         twolinewid.setObjectName("RedWid")
         twolinewid.setLayout(twoinone)
@@ -246,7 +246,7 @@ class DataF1Table(QWidget):
 
         self.eraselbl.setVisible(False)
         self.erase.setVisible(False)
-        adjustLay(self.innerlay,False)
+        stretchLay(self.innerlay)
 
 
     def getSQLtab(self):
@@ -286,7 +286,7 @@ class DataF1Table(QWidget):
 
             if self.listvar!=self.changer:
                 self.changer = self.listvar
-                adjustLay(self.sortlay,True)
+                clearLay(self.sortlay)
                 self.sortbool = False
 
             if self.sortbool == False:
@@ -303,11 +303,11 @@ class DataF1Table(QWidget):
                 self.sortbool = True
 
     def goBack(self):
-        adjustLay(self.innerlay,True)
+        clearLay(self.innerlay)
         buttons = backtoSQL(self.innerlay)
         for btn in buttons:
             btn.clicked.connect(self.getList)
-        adjustLay(self.innerlay,False)
+        stretchLay(self.innerlay)
 
     def makeTable(self):
         self.tablemade = True
@@ -347,7 +347,7 @@ class DataF1Table(QWidget):
         if ask==True:
             self.goBack()
             self.changer=""
-            adjustLay(self.sortlay,True)
+            clearLay(self.sortlay)
 
     def saving(self):
         ask = SQLsave(self, self.spinyear, self.combo, self.content, self.tabheader)
