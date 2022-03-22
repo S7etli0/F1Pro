@@ -292,7 +292,11 @@ class DataF1Table(QWidget):
             if self.sortbool == False:
                 self.sortwid.setVisible(True)
 
-                sortlbl, self.sortbox, order, self.asc, self.des, sortbtn = sortItems(self.colname, self.ref)
+                if "race" in self.ref:
+                    self.colname.append("id")
+                sortlbl, self.sortbox = setComboBox(3, self.colname)
+
+                order, self.asc, self.des, sortbtn = sortItems()
                 sortbtn.clicked.connect(self.sorting)
 
                 addtoSortlay = [sortlbl,self.sortbox,order,self.asc,self.des,sortbtn]
