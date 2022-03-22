@@ -59,5 +59,10 @@ css_Style = """
     QPushButton#Mar{
         margin-top: 10px;        
     }
+    
+    QSpinBox, QComboBox{
+        height: 25px;
+        min-width: 100px;
+    }
 
 """

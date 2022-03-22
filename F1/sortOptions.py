@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QLabel, QRadioButton, QButtonGroup, QComboBox, QPushButton
+from PyQt5.QtWidgets import QLabel, QRadioButton, QPushButton
 
 def sortItems():
 
