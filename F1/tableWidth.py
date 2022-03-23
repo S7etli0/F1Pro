@@ -12,11 +12,15 @@ def tabWidth(self,table,titel,scroll,tabwid):
     if 'Calendar' in titel.text():
         for i in range(tabcol):
             header.setSectionResizeMode(i, QHeaderView.Stretch)
-        header.setSectionResizeMode(tabcol - 1, QHeaderView.ResizeToContents)
 
     elif 'Team' in titel.text():
         header.setSectionResizeMode(1, QHeaderView.Stretch)
         header.setStretchLastSection(False)
+
+    elif 'Driver' in titel.text():
+        for i in range(tabcol-2):
+            header.setSectionResizeMode(i, QHeaderView.Stretch)
+        header.setSectionResizeMode(tabcol - 1, QHeaderView.ResizeToContents)
 
     else:
         header.setSectionResizeMode(QHeaderView.ResizeToContents)

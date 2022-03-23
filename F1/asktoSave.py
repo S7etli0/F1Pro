@@ -4,12 +4,8 @@ from F1.mySQL import startSQL
 
 mydb = startSQL(True)
 
-def SQLsave(self, spinyear, combo, content, tabheader):
+def SQLsave(self, name, content, tabheader):
 
-    calendar = int(spinyear.text())
-    data = str(combo.currentText())
-
-    name = (data + " " + str(calendar)).replace(" ", "_")
     ask = QMessageBox.question(self, "Saving Table", "Do you want to save table " + name + " ?",
                                QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
 

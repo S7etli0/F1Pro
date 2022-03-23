@@ -24,6 +24,7 @@ from F1.makeCombo import setComboBox
 from F1.tableWidth import tabWidth
 from F1.sortOptions import sortItems
 from F1.raceData import getRaceData
+from F1.itemSetter import Visibility, AddingItems
 
 # readme.md & requirements
 # check whole page
@@ -32,10 +33,9 @@ from F1.raceData import getRaceData
 # remove repeats
 # descriptions
 # set values
-# request + soup
 # id to order
 # classes
-
+# images
 
 class DataF1Table(QWidget):
     def __init__(self):
@@ -82,7 +82,6 @@ class DataF1Table(QWidget):
         self.goBack()
 
     def mainVariables(self):
-
         self.rows = 0
         self.cols = 0
         self.tablemade = False
@@ -113,14 +112,11 @@ class DataF1Table(QWidget):
         self.loadtab.setMaximum(10)
         self.loadtab.setVisible(False)
 
-        addtoMainwid = [self.titel,self.introlbl,self.tablay,self.sortwid,self.loadtab]
-        for item in addtoMainwid:
-            if item!=self.tablay:
-                self.mainwid.addWidget(item)
-            else: self.mainwid.addLayout(item)
+        AddingItems([self.titel,self.introlbl],self.mainwid)
+        self.mainwid.addLayout(self.tablay)
+        AddingItems([self.sortwid,self.loadtab],self.mainwid)
 
     def sideWEBtab(self):
-
         firstrow = QHBoxLayout()
         self.spinlbl,self.spinyear = setYearLbl()
         firstrow.addWidget(self.spinlbl)
@@ -155,19 +151,15 @@ class DataF1Table(QWidget):
 
         clearlab = QLabel()
         addtoLayload = [doubwid,btn,clearlab,self.savelbl,self.savedata]
-        for item in addtoLayload:
-            self.layload.addWidget(item)
+        AddingItems(addtoLayload,self.layload)
         self.layload.addStretch()
 
 
     def race_results(self):
-
         if self.sortbool == True:
             clearLay(self.sortlay)
             self.sortbool = False
-            self.sortwid.setVisible(False)
-            self.erase.setVisible(False)
-            self.eraselbl.setVisible(False)
+            Visibility([self.sortwid, self.erase,self.eraselbl],False)
 
         calendar = int(self.spinyear.text())
         data = str(self.combo.currentText())
@@ -175,9 +167,7 @@ class DataF1Table(QWidget):
         if data == "team ranks" and calendar < 1958:
             QMessageBox.about(self, "Data Error", "No team Competitions before 1958!")
         else:
-
-            self.savedata.setVisible(True)
-            self.savelbl.setVisible(True)
+            Visibility([self.savedata,self.savelbl],True)
             links, var, self.tabheader, numbers = loadingData(data)
 
             for sector in links:
@@ -209,7 +199,7 @@ class DataF1Table(QWidget):
 
     def getList(self):
         listname = self.sender().text()
-        self.allcontent = openTab(listname)
+        allcontent = openTab(listname)
         clearLay(self.innerlay)
 
         maintag = QLabel("Category " + str(listname).replace("_", " ").title() + " Tables")
@@ -219,7 +209,7 @@ class DataF1Table(QWidget):
         tabImage('menues', 3, self.innerlay)
 
         twoinone = QHBoxLayout()
-        lbltag, self.yearlist = setComboBox(2,self.allcontent)
+        lbltag, self.yearlist = setComboBox(2,allcontent)
         twoinone.addWidget(lbltag)
         twoinone.addWidget(self.yearlist)
 
@@ -228,8 +218,7 @@ class DataF1Table(QWidget):
         twolinewid.setLayout(twoinone)
 
         btn = QPushButton("Load SQL Table")
-        btn.clicked.connect(self.getSQLtab)
-        self.listvar = listname
+        btn.clicked.connect(lambda:self.getSQLtab(allcontent,listname))
 
         backbtn = QPushButton("Back to Menu")
         backbtn.clicked.connect(self.goBack)
@@ -237,40 +226,33 @@ class DataF1Table(QWidget):
         clearlbl = QLabel()
         tabImage('btn-del', 1, self.eraselbl)
 
-        year = str(self.yearlist.currentText())
-        self.deltab = self.listvar + "_" + year
-
         addtoInnerLay = [twolinewid,btn,backbtn,clearlbl,self.eraselbl,self.erase]
-        for item in addtoInnerLay:
-            self.innerlay.addWidget(item)
+        AddingItems(addtoInnerLay,self.innerlay)
 
-        self.eraselbl.setVisible(False)
-        self.erase.setVisible(False)
+        Visibility([self.eraselbl, self.erase], False)
         stretchLay(self.innerlay)
 
 
-    def getSQLtab(self):
+    def getSQLtab(self,allcontent,listname):
 
         if self.sortbool != True:
             self.sortbool = True
-            self.savedata.setVisible(False)
-            self.savelbl.setVisible(False)
+            Visibility([self.savedata, self.savelbl], False)
 
-        if len(self.allcontent) == 0:
+        if len(allcontent) == 0:
             QMessageBox.about(self,"Empty Database","No tables are Saved in this Category!")
         else:
-            self.ref = self.listvar + "_" + str(self.yearlist.currentText())
-            self.deltab = self.ref
+            self.currtab = listname + "_" + str(self.yearlist.currentText())
 
             if self.tablemade != False:
                 self.tablay.removeWidget(self.tabwid)
             self.makeTable()
 
-            cellsdata,vertic,self.rows = listSetRows(self.ref)
-            self.colname,self.cols = setSQLheader(self.ref)
+            cellsdata,vertic,self.rows = listSetRows(self.currtab)
+            self.colname,self.cols = setSQLheader(self.currtab)
 
-            tabImage(self.listvar.replace("_", "-"), 2, self.introlbl)
-            mytitle = self.ref.split("_")
+            tabImage(listname.replace("_", "-"), 2, self.introlbl)
+            mytitle = self.currtab.split("_")
 
             if len(mytitle) > 2:
                 self.titel.setText(
@@ -278,21 +260,19 @@ class DataF1Table(QWidget):
             else:
                 self.titel.setText("List of the " + str(mytitle[0]).title() + " for the " + mytitle[1] + " Formula 1 Season")
 
-            self.erase.setVisible(True)
-            self.eraselbl.setVisible(True)
-
+            Visibility([self.erase,self.eraselbl],True)
             fillTable(self.table, self.rows, self.cols, cellsdata, self.colname, vertic)
             tabWidth(self,self.table,self.titel,self.scroll,self.tabwid)
 
-            if self.listvar!=self.changer:
-                self.changer = self.listvar
+            if listname!=self.changer:
+                self.changer = listname
                 clearLay(self.sortlay)
                 self.sortbool = False
 
             if self.sortbool == False:
                 self.sortwid.setVisible(True)
 
-                if "race" in self.ref:
+                if "race" in self.currtab:
                     self.colname.append("id")
                 sortlbl, self.sortbox = setComboBox(3, self.colname)
 
@@ -300,8 +280,7 @@ class DataF1Table(QWidget):
                 sortbtn.clicked.connect(self.sorting)
 
                 addtoSortlay = [sortlbl,self.sortbox,order,self.asc,self.des,sortbtn]
-                for item in addtoSortlay:
-                    self.sortlay.addWidget(item)
+                AddingItems(addtoSortlay,self.sortlay)
 
                 self.sortwid.setLayout(self.sortlay)
                 self.sortbool = True
@@ -343,18 +322,21 @@ class DataF1Table(QWidget):
             direct = self.des.text()
 
         sorter = self.sortbox.currentText()
-        cellsdata,vertic,rows = sortData(self.ref,sorter,direct)
+        cellsdata,vertic,rows = sortData(self.currtab,sorter,direct)
         fillTable(self.table,rows, self.cols, cellsdata, self.colname, vertic)
 
     def deletion(self):
-        ask = eraseTab(self,self.deltab)
+        ask = eraseTab(self,self.currtab)
         if ask==True:
             self.goBack()
             self.changer=""
             clearLay(self.sortlay)
 
     def saving(self):
-        ask = SQLsave(self, self.spinyear, self.combo, self.content, self.tabheader)
+        calendar = self.spinyear.text()
+        data = self.combo.currentText().replace(" ", "_")
+        name = data + "_" + calendar
+        ask = SQLsave(self, name, self.content, self.tabheader)
         if ask == True:
             self.goBack()
 
