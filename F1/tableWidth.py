@@ -26,7 +26,6 @@ def tabWidth(self,table,titel,scroll,tabwid):
         header.setSectionResizeMode(QHeaderView.ResizeToContents)
 
     self.setGeometry(100, 100, 0, 0)
-
     if max <= 750:
         tabwid.setMinimumWidth(max)
         self.setFixedWidth(max + 350)

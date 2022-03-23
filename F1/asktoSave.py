@@ -31,5 +31,4 @@ def SQLsave(self, name, content, tabheader):
         ask = False
 
     return ask
-
     mydb.commit()

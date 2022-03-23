@@ -26,16 +26,15 @@ from F1.sortOptions import sortItems
 from F1.raceData import getRaceData
 from F1.itemSetter import Visibility, AddingItems
 
-# readme.md & requirements
+# requirements.txt
 # check whole page
-# pictures,font,align
+# check classes
+# images,font,align
 # out methods, def
 # remove repeats
 # descriptions
 # set values
 # id to order
-# classes
-# images
 
 class DataF1Table(QWidget):
     def __init__(self):
