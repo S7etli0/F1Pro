@@ -28,13 +28,15 @@ from F1.itemSetter import Visibility, AddingItems
 
 # requirements.txt
 # check whole page
-# check classes
+# check modules
+# make classes
 # images,font,align
 # out methods, def
 # remove repeats
 # descriptions
 # set values
 # id to order
+# mysql config
 
 class DataF1Table(QWidget):
     def __init__(self):

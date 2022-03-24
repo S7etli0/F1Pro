@@ -1,8 +1,8 @@
 from F1.mySQL import startSQL
 
-mydb = startSQL(False)
 
 def sortData(dataref,sorter,direct):
+    mydb = startSQL(False)
     curs = mydb.cursor()
 
     curs.execute("USE formula1db")

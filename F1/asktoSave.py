@@ -2,7 +2,6 @@ from PyQt5.QtWidgets import QMessageBox
 from F1.makeSQLtab import createSQL
 from F1.mySQL import startSQL
 
-mydb = startSQL(True)
 
 def SQLsave(self, name, content, tabheader):
 
@@ -10,7 +9,7 @@ def SQLsave(self, name, content, tabheader):
                                QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
 
     if ask == QMessageBox.Yes:
-
+        mydb = startSQL(True)
         curs = mydb.cursor()
         curs.execute("USE formula1db")
         curs.execute("SHOW TABLES")

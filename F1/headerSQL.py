@@ -17,8 +17,3 @@ def setSQLheader(ref):
     mydb.commit()
 
     return colname, cols
-
-
-
-
-    
