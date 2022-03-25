@@ -1,12 +1,16 @@
 import mysql.connector as con
+from F1.configParser import readConfig
 
+file=".venv/config.ini"
+section='mySQL'
+data = readConfig(file,section)
 
 def startSQL(check):
 
     mydb = con.connect(
-        host="localhost",
-        user="root",
-        passwd="Slav7528dokumape"
+        host=data["host"],
+        user=data["user"],
+        password=data["password"]
     )
 
     if check == True:
