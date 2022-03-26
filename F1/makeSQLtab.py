@@ -3,10 +3,8 @@ from F1.mySQL import startSQL
 
 def createSQL(self, name, content, tabheader):
     stock = []
-    mydb = startSQL(False)
+    mydb,curs = startSQL(False)
 
-    curs = mydb.cursor()
-    curs.execute("USE formula1db")
     cols = len(tabheader)
     rows = len(content)
 

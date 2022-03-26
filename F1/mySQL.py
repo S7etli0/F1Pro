@@ -17,10 +17,8 @@ def startSQL(check):
         curs = mydb.cursor()
         curs.execute("CREATE DATABASE IF NOT EXISTS formula1db")
         mydb.commit()
-    #     check = False
-    #
-    # if check == False:
-    #     curs = mydb.cursor()
-    #     curs.execute("USE formula1db")
 
-    return mydb
+    curs = mydb.cursor()
+    curs.execute("USE formula1db")
+
+    return mydb, curs

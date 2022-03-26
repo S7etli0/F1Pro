@@ -9,9 +9,7 @@ def SQLsave(self, name, content, tabheader):
                                QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
 
     if ask == QMessageBox.Yes:
-        mydb = startSQL(True)
-        curs = mydb.cursor()
-        curs.execute("USE formula1db")
+        mydb,curs = startSQL(True)
         curs.execute("SHOW TABLES")
 
         alltables = []

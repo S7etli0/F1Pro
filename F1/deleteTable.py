@@ -7,9 +7,7 @@ def eraseTab(lay, deltab):
                                QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
 
     if ask == QMessageBox.Yes:
-        mydb = startSQL(False)
-        curs = mydb.cursor()
-        curs.execute("USE formula1db")
+        mydb,curs = startSQL(False)
         curs.execute("DROP TABLE " + deltab)
         QMessageBox.about(lay, "Delete Table", "The table was erased from the database!")
         ask = True

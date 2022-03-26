@@ -1,9 +1,7 @@
 from F1.mySQL import startSQL
 
 def openTab(name):
-    mydb = startSQL(True)
-    curs = mydb.cursor()
-    curs.execute("USE formula1db")
+    mydb,curs = startSQL(True)
     curs.execute("SHOW TABLES")
 
     allcontent = []

@@ -2,10 +2,8 @@ from F1.mySQL import startSQL
 
 
 def sortData(dataref,sorter,direct):
-    mydb = startSQL(False)
-    curs = mydb.cursor()
+    mydb,curs = startSQL(False)
 
-    curs.execute("USE formula1db")
     if sorter == "date" or sorter == "id" or sorter == "points":
         curs.execute("SELECT * FROM " + dataref + " ORDER BY id" + " " + direct)
     elif sorter == "laps":

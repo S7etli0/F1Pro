@@ -2,9 +2,7 @@ from F1.mySQL import startSQL
 
 
 def listSetRows(ref):
-    mydb = startSQL(False)
-    curs = mydb.cursor()
-    curs.execute("USE formula1db")
+    mydb,curs = startSQL(False)
     curs.execute("SELECT * FROM " + ref)
 
     cellsdata = []

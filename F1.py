@@ -46,10 +46,11 @@ class DataF1Table(QWidget):
     def VisualTab(self):
         self.setWindowTitle("Formula1 Database")
         self.setWindowIcon(QIcon("images/f1-logo.png"))
-        self.setGeometry(100, 100, 350, 350)
+        self.setMaximumSize(640, 435)
+        self.move(100, 100)
+
         self.setObjectName("RedWid")
         self.gridStructure()
-
         self.mainVariables()
         self.setMainTab()
         self.sideWEBtab()
