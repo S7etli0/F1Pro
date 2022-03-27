@@ -16,7 +16,6 @@ def SQLsave(self, name, content, tabheader):
         for x in curs:
             clear = (str(x)[1:-1].replace(",", ""))
             alltables.append(clear.replace("'", ""))
-        mydb.commit()
 
         if name not in alltables:
             createSQL(self, name, content, tabheader)
@@ -28,4 +27,3 @@ def SQLsave(self, name, content, tabheader):
         ask = False
 
     return ask
-    mydb.commit()

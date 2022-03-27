@@ -12,6 +12,4 @@ def listSetRows(ref):
         vertic.append(str(x[0]))
     rows = len(cellsdata)
 
-    mydb.commit()
-
     return cellsdata, vertic, rows

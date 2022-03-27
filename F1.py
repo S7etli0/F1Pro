@@ -36,7 +36,8 @@ from F1.itemSetter import Visibility, AddingItems
 # descriptions
 # set values
 # id to order
-# mysql config
+# presentation
+# fixed width for all
 
 class DataF1Table(QWidget):
     def __init__(self):
@@ -46,7 +47,7 @@ class DataF1Table(QWidget):
     def VisualTab(self):
         self.setWindowTitle("Formula1 Database")
         self.setWindowIcon(QIcon("images/f1-logo.png"))
-        self.setMaximumSize(640, 435)
+        self.setMaximumSize(640, 435)   #670
         self.move(100, 100)
 
         self.setObjectName("RedWid")

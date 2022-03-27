@@ -12,6 +12,4 @@ def setSQLheader(ref):
     colname.pop(0)
     cols = len(colname)
 
-    mydb.commit()
-
     return colname, cols
