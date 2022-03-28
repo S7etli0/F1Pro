@@ -13,12 +13,13 @@ def startSQL(check):
         password=data["password"]
     )
 
+    db = "formula1db"
     if check == True:
         curs = mydb.cursor()
-        curs.execute("CREATE DATABASE IF NOT EXISTS formula1db")
+        curs.execute("CREATE DATABASE IF NOT EXISTS "+db)
         mydb.commit()
 
     curs = mydb.cursor()
-    curs.execute("USE formula1db")
+    curs.execute("USE "+db)
 
     return mydb, curs

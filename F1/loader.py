@@ -21,4 +21,6 @@ def loadingData(data):
         numbers = {}
         tabheader = ['team_name', 'drivers', 'points']
 
-    return links, var, tabheader, numbers
+    cols = len(tabheader)
+
+    return links, var, tabheader, cols, numbers

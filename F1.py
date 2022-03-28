@@ -4,8 +4,9 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QTabWidget, QApplication, QProgressBar, QScrollArea, \
     QTableWidget, QGridLayout, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QMessageBox
 
-from F1.images import tabImage
-from F1.css import css_Style
+from F1.dataTitel import sqlTitel
+from F1.imageSet import tabImage
+from F1.cssLay import css_Style
 from F1.loader import loadingData
 from F1.dataScrape import WebScrape
 from F1.tabList import listSetRows
@@ -26,7 +27,6 @@ from F1.sortOptions import sortItems
 from F1.raceData import getRaceData
 from F1.itemSetter import Visibility, AddingItems
 
-# requirements.txt
 # check whole page
 # check modules
 # make classes
@@ -44,10 +44,11 @@ class DataF1Table(QWidget):
         super().__init__()
         self.VisualTab()
 
+
     def VisualTab(self):
         self.setWindowTitle("Formula1 Database")
         self.setWindowIcon(QIcon("images/f1-logo.png"))
-        self.setMaximumSize(640, 435)   #670
+        self.setMaximumSize(925, 435)   #670
         self.move(100, 100)
 
         self.setObjectName("RedWid")
@@ -56,6 +57,7 @@ class DataF1Table(QWidget):
         self.setMainTab()
         self.sideWEBtab()
         self.show()
+
 
     def gridStructure(self):
         loadwid = QWidget()
@@ -83,6 +85,7 @@ class DataF1Table(QWidget):
         self.setLayout(mygrid)
 
         self.goBack()
+
 
     def mainVariables(self):
         self.rows = 0
@@ -118,6 +121,7 @@ class DataF1Table(QWidget):
         AddingItems([self.titel,self.introlbl],self.mainwid)
         self.mainwid.addLayout(self.tablay)
         AddingItems([self.sortwid,self.loadtab],self.mainwid)
+
 
     def sideWEBtab(self):
         firstrow = QHBoxLayout()
@@ -171,14 +175,12 @@ class DataF1Table(QWidget):
             QMessageBox.about(self, "Data Error", "No team Competitions before 1958!")
         else:
             Visibility([self.savedata,self.savelbl],True)
-            links, var, self.tabheader, numbers = loadingData(data)
+            links, var, self.tabheader, self.cols, numbers = loadingData(data)
 
             for sector in links:
-
                 table = WebScrape(calendar, sector)
                 progressload(self.loadtab)
-                self.content = getRaceData(table,data,var,numbers,sector)
-
+                self.content, self.rows = getRaceData(table,data,var,numbers,sector)
 
             if self.tablemade != False:
                 self.tablay.removeWidget(self.tabwid)
@@ -186,9 +188,8 @@ class DataF1Table(QWidget):
             self.tabwid.setObjectName("BlackWid")
 
             tabImage(data.replace(" ", "-"), 0, self.introlbl)
-            self.titel.setText("List of the " + data.title() + " for the " + str(calendar) + " Formula 1 Season")
-            self.cols = int(len(self.tabheader))
-            self.rows = int(len(self.content))
+            titletext = data.title() + " for the " + str(calendar)
+            self.titel.setText("List of the " + titletext + " Formula 1 Season")
 
             vertic = []
             for i in range(self.rows):
@@ -199,6 +200,7 @@ class DataF1Table(QWidget):
             tabWidth(self,self.table,self.titel,self.scroll,self.tabwid)
 
         self.goBack()
+
 
     def getList(self):
         listname = self.sender().text()
@@ -255,13 +257,8 @@ class DataF1Table(QWidget):
             self.colname,self.cols = setSQLheader(self.currtab)
 
             tabImage(listname.replace("_", "-"), 2, self.introlbl)
-            mytitle = self.currtab.split("_")
-
-            if len(mytitle) > 2:
-                self.titel.setText(
-                    "List of the " + str(mytitle[0] + " " + mytitle[1]).title() + " for the " + mytitle[2] + " Formula 1 Season")
-            else:
-                self.titel.setText("List of the " + str(mytitle[0]).title() + " for the " + mytitle[1] + " Formula 1 Season")
+            titletext = sqlTitel(self.currtab)
+            self.titel.setText(titletext)
 
             Visibility([self.erase,self.eraselbl],True)
             fillTable(self.table, self.rows, self.cols, cellsdata, self.colname, vertic)
@@ -273,20 +270,25 @@ class DataF1Table(QWidget):
                 self.sortbool = False
 
             if self.sortbool == False:
-                self.sortwid.setVisible(True)
+                self.resetSQLtab()
 
-                if "race" in self.currtab:
-                    self.colname.append("id")
-                sortlbl, self.sortbox = setComboBox(3, self.colname)
 
-                order, self.asc, self.des, sortbtn = sortItems()
-                sortbtn.clicked.connect(self.sorting)
+    def resetSQLtab(self):
+        self.sortwid.setVisible(True)
 
-                addtoSortlay = [sortlbl,self.sortbox,order,self.asc,self.des,sortbtn]
-                AddingItems(addtoSortlay,self.sortlay)
+        if "race" in self.currtab:
+            self.colname.append("id")
+        sortlbl, self.sortbox = setComboBox(3, self.colname)
 
-                self.sortwid.setLayout(self.sortlay)
-                self.sortbool = True
+        order, self.asc, self.des, sortbtn = sortItems()
+        sortbtn.clicked.connect(self.sorting)
+
+        addtoSortlay = [sortlbl, self.sortbox, order, self.asc, self.des, sortbtn]
+        AddingItems(addtoSortlay, self.sortlay)
+
+        self.sortwid.setLayout(self.sortlay)
+        self.sortbool = True
+
 
     def goBack(self):
         clearLay(self.innerlay)
@@ -294,6 +296,7 @@ class DataF1Table(QWidget):
         for btn in buttons:
             btn.clicked.connect(self.getList)
         stretchLay(self.innerlay)
+
 
     def makeTable(self):
         self.tablemade = True
@@ -328,12 +331,14 @@ class DataF1Table(QWidget):
         cellsdata,vertic,rows = sortData(self.currtab,sorter,direct)
         fillTable(self.table,rows, self.cols, cellsdata, self.colname, vertic)
 
+
     def deletion(self):
         ask = eraseTab(self,self.currtab)
         if ask==True:
             self.goBack()
             self.changer=""
             clearLay(self.sortlay)
+
 
     def saving(self):
         calendar = self.spinyear.text()

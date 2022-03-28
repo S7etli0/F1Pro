@@ -21,4 +21,4 @@ def getRaceData(table,data,var,numbers,sector):
                 rowdatas.append(racelist[cell])
             content.append(rowdatas)
     
-    return content
+    return content, len(content)
