@@ -1,6 +1,6 @@
 from PyQt5.QtCore import Qt
+from F1.imageSet import tabImage
 from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QVBoxLayout
-from F1.images import tabImage
 
 def backtoSQL(innerlay):
     sqltitel = QLabel("Choose a Table Category")

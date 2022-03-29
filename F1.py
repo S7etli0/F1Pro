@@ -88,8 +88,7 @@ class DataF1Table(QWidget):
 
 
     def mainVariables(self):
-        self.rows = 0
-        self.cols = 0
+        self.rows, self.cols = 0, 0
         self.tablemade = False
         self.sortbool = False
         self.changer=""
