@@ -3,7 +3,10 @@ from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QTableWidgetItem
 
 
-def fillTable(table, tabrow, tabcol, filler, myheader, vertic):
+def fillTable(table, filler, myheader, vertic):
+    tabrow = len(filler)
+    tabcol = len(myheader)
+
     table.setRowCount(tabrow)
     table.setColumnCount(tabcol)
     table.setVerticalHeaderLabels(vertic)

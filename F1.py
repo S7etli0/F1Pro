@@ -88,7 +88,6 @@ class DataF1Table(QWidget):
 
 
     def mainVariables(self):
-        self.rows, self.cols = 0, 0
         self.tablemade = False
         self.sortbool = False
         self.changer=""
@@ -143,7 +142,6 @@ class DataF1Table(QWidget):
 
         btn = QPushButton("Load Data in Table")
         btn.setObjectName("Mar")
-        self.content = []
         btn.clicked.connect(self.race_results)
 
         self.savelbl = QLabel()
@@ -174,28 +172,28 @@ class DataF1Table(QWidget):
             QMessageBox.about(self, "Data Error", "No team Competitions before 1958!")
         else:
             Visibility([self.savedata,self.savelbl],True)
-            links, var, self.tabheader, self.cols, numbers = loadingData(data)
+            links, var, self.tabheader, cols, numbers = loadingData(data)
 
             for sector in links:
                 table = WebScrape(calendar, sector)
                 progressload(self.loadtab)
-                self.content, self.rows = getRaceData(table,data,var,numbers,sector)
+                self.content, rows = getRaceData(table,data,var,numbers,sector)
 
             if self.tablemade != False:
                 self.tablay.removeWidget(self.tabwid)
-            self.makeTable()
+            self.makeTable(cols,rows)
             self.tabwid.setObjectName("BlackWid")
 
             tabImage(data.replace(" ", "-"), 0, self.introlbl)
-            titletext = data.title() + " for the " + str(calendar)
-            self.titel.setText("List of the " + titletext + " Formula 1 Season")
+            self.titletext = data.title() + " for the " + str(calendar)
+            self.titel.setText("List of the " + self.titletext + " Formula 1 Season")
 
             vertic = []
-            for i in range(self.rows):
+            for i in range(rows):
                 vertic.append(str(i + 1))
 
-            fillTable(self.table, self.rows, self.cols, self.content, self.tabheader, vertic)
-            tabHeight(self, self.rows, self.sortbool)
+            fillTable(self.table, self.content, self.tabheader, vertic)
+            tabHeight(self, rows, self.sortbool)
             tabWidth(self,self.table,self.titel,self.scroll,self.tabwid)
 
         self.goBack()
@@ -206,7 +204,9 @@ class DataF1Table(QWidget):
         allcontent = openTab(listname)
         clearLay(self.innerlay)
 
-        maintag = QLabel("Category " + str(listname).replace("_", " ").title() + " Tables")
+        category = str(listname).replace("_", " ").title()
+        maintag = QLabel("Category " + category + " Tables")
+
         maintag.setObjectName("BlackLab")
         maintag.setAlignment(Qt.AlignCenter)
         self.innerlay.addWidget(maintag)
@@ -250,17 +250,17 @@ class DataF1Table(QWidget):
 
             if self.tablemade != False:
                 self.tablay.removeWidget(self.tabwid)
-            self.makeTable()
 
-            cellsdata,vertic,self.rows = listSetRows(self.currtab)
-            self.colname,self.cols = setSQLheader(self.currtab)
+            cellsdata,vertic,rows = listSetRows(self.currtab)
+            colname,cols = setSQLheader(self.currtab)
+            self.makeTable(cols,rows)
 
             tabImage(listname.replace("_", "-"), 2, self.introlbl)
             titletext = sqlTitel(self.currtab)
             self.titel.setText(titletext)
 
             Visibility([self.erase,self.eraselbl],True)
-            fillTable(self.table, self.rows, self.cols, cellsdata, self.colname, vertic)
+            fillTable(self.table, cellsdata, colname, vertic)
             tabWidth(self,self.table,self.titel,self.scroll,self.tabwid)
 
             if listname!=self.changer:
@@ -269,18 +269,18 @@ class DataF1Table(QWidget):
                 self.sortbool = False
 
             if self.sortbool == False:
-                self.resetSQLtab()
+                self.resetSQLtab(colname)
 
 
-    def resetSQLtab(self):
+    def resetSQLtab(self,colname):
         self.sortwid.setVisible(True)
 
         if "race" in self.currtab:
-            self.colname.append("id")
-        sortlbl, self.sortbox = setComboBox(3, self.colname)
+            colname.append("id")
+        sortlbl, self.sortbox = setComboBox(3, colname)
 
         order, self.asc, self.des, sortbtn = sortItems()
-        sortbtn.clicked.connect(self.sorting)
+        sortbtn.clicked.connect(lambda:self.sorting(colname))
 
         addtoSortlay = [sortlbl, self.sortbox, order, self.asc, self.des, sortbtn]
         AddingItems(addtoSortlay, self.sortlay)
@@ -297,11 +297,11 @@ class DataF1Table(QWidget):
         stretchLay(self.innerlay)
 
 
-    def makeTable(self):
+    def makeTable(self,cols,rows):
         self.tablemade = True
         self.table = QTableWidget()
-        self.table.setRowCount(self.rows)
-        self.table.setColumnCount(self.cols)
+        self.table.setRowCount(rows)
+        self.table.setColumnCount(cols)
         self.table.horizontalHeader().setStretchLastSection(True)
 
         self.tabwid = QWidget()
@@ -317,18 +317,18 @@ class DataF1Table(QWidget):
 
         if self.sortbool == True:
             self.tabwid.setFixedHeight(370)
-        tabHeight(self, self.rows, self.sortbool)
+        tabHeight(self, rows, self.sortbool)
 
 
-    def sorting(self):
+    def sorting(self, colname):
         if self.asc.isChecked():
             direct = self.asc.text()
-        elif self.des.isChecked():
+        else:
             direct = self.des.text()
 
         sorter = self.sortbox.currentText()
-        cellsdata,vertic,rows = sortData(self.currtab,sorter,direct)
-        fillTable(self.table,rows, self.cols, cellsdata, self.colname, vertic)
+        cellsdata,vertic = sortData(self.currtab,sorter,direct)
+        fillTable(self.table, cellsdata, colname, vertic)
 
 
     def deletion(self):
@@ -340,9 +340,7 @@ class DataF1Table(QWidget):
 
 
     def saving(self):
-        calendar = self.spinyear.text()
-        data = self.combo.currentText().replace(" ", "_")
-        name = data + "_" + calendar
+        name = (self.titletext.replace(" for the ", "_")).replace(" ", "_")
         ask = SQLsave(self, name, self.content, self.tabheader)
         if ask == True:
             self.goBack()
