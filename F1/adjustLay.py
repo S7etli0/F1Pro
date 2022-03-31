@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout
+from F1.itemSetter import layinWidget
 
 
 def clearLay(lay):
@@ -8,8 +8,6 @@ def clearLay(lay):
 
 
 def stretchLay(lay):
-    stretch = QWidget()
-    strlay = QVBoxLayout()
+    stretch, strlay = layinWidget()
     strlay.addStretch()
-    stretch.setLayout(strlay)
     lay.addWidget(stretch)

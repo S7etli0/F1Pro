@@ -25,7 +25,7 @@ from F1.makeCombo import setComboBox
 from F1.tableWidth import tabWidth
 from F1.sortOptions import sortItems
 from F1.raceData import getRaceData
-from F1.itemSetter import Visibility, AddingItems
+from F1.itemSetter import Visibility, AddingItems, layinWidget
 
 # check whole page
 # check modules
@@ -57,9 +57,7 @@ class DataF1Table(QWidget):
 
 
     def gridStructure(self):
-        loadwid = QWidget()
-        self.layload = QVBoxLayout()
-        loadwid.setLayout(self.layload)
+        loadwid, self.layload = layinWidget()
 
         loadlabl = QLabel("Scrape Data from the Website")
         loadlabl.setObjectName("BlackLab")
@@ -67,19 +65,15 @@ class DataF1Table(QWidget):
         self.layload.addWidget(loadlabl)
         tabImage('menu', 3, self.layload)
 
-        sqltabs = QWidget()
-        self.innerlay = QVBoxLayout()
-        sqltabs.setLayout(self.innerlay)
+        sqltabs, self.innerlay = layinWidget()
 
         maintab = QTabWidget()
         maintab.setMaximumWidth(270)
         maintab.addTab(loadwid, "Load Data")
         maintab.addTab(sqltabs, "View Data")
 
-        tabright = QWidget()
+        tabright, self.mainwid = layinWidget()
         tabright.setObjectName("White")
-        self.mainwid = QVBoxLayout()
-        tabright.setLayout(self.mainwid)
 
         mygrid = QGridLayout()
         mygrid.addWidget(maintab, 0, 0)
@@ -135,10 +129,8 @@ class DataF1Table(QWidget):
         secrow.addWidget(self.datalbl)
         secrow.addWidget(self.combo)
 
-        doubwid = QWidget()
+        doubwid, doublay = layinWidget()
         doubwid.setObjectName("BlackWid")
-        doublay = QVBoxLayout()
-        doubwid.setLayout(doublay)
         doublay.addLayout(firstrow)
         doublay.addLayout(secrow)
 
@@ -306,10 +298,8 @@ class DataF1Table(QWidget):
         self.table.setColumnCount(cols)
         self.table.horizontalHeader().setStretchLastSection(True)
 
-        self.tabwid = QWidget()
-        self.form = QVBoxLayout()
+        self.tabwid, self.form = layinWidget()
         self.form.addWidget(self.table)
-        self.tabwid.setLayout(self.form)
 
         self.scroll = QScrollArea()
         self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
