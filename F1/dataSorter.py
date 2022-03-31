@@ -1,15 +1,18 @@
 from F1.mySQL import startSQL
 
 
-def sortData(dataref,sorter,direct):
+def sortData(tabname,colname,way):
     mydb,curs = startSQL(False)
+    listcheck = ["date","order","points"]
 
-    if sorter == "date" or sorter == "id" or sorter == "points":
-        curs.execute("SELECT * FROM " + dataref + " ORDER BY id" + " " + direct)
-    elif sorter == "laps":
-        curs.execute("SELECT * FROM " + dataref + " ORDER BY ABS(" + sorter + ") " + direct)
+    if colname in listcheck:
+        direct = "id"
+    elif colname == "laps":
+        direct = "ABS(" + colname + ")"
     else:
-        curs.execute("SELECT * FROM " + dataref + " ORDER BY " + sorter + " " + direct)
+        direct = colname
+
+    curs.execute("SELECT * FROM " + tabname + " ORDER BY " + direct + " " + way)
 
     cellsdata = []
     vertic = []

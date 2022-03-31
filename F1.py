@@ -30,14 +30,11 @@ from F1.itemSetter import Visibility, AddingItems
 # check whole page
 # check modules
 # make classes
-# images,font,align
 # out methods, def
 # remove repeats
 # descriptions
 # set values
-# id to order
 # presentation
-# fixed width for all
 
 class DataF1Table(QWidget):
     def __init__(self):
@@ -63,7 +60,12 @@ class DataF1Table(QWidget):
         loadwid = QWidget()
         self.layload = QVBoxLayout()
         loadwid.setLayout(self.layload)
-        tabImage('menu', 4, self.layload)
+
+        loadlabl = QLabel("Scrape Data from the Website")
+        loadlabl.setObjectName("BlackLab")
+        loadlabl.setAlignment(Qt.AlignCenter)
+        self.layload.addWidget(loadlabl)
+        tabImage('menu', 3, self.layload)
 
         sqltabs = QWidget()
         self.innerlay = QVBoxLayout()
@@ -184,7 +186,7 @@ class DataF1Table(QWidget):
             self.makeTable(cols,rows)
             self.tabwid.setObjectName("BlackWid")
 
-            tabImage(data.replace(" ", "-"), 0, self.introlbl)
+            tabImage(data.replace(" ", "-"), 2, self.introlbl)
             self.titletext = data.title() + " for the " + str(calendar)
             self.titel.setText("List of the " + self.titletext + " Formula 1 Season")
 
@@ -201,7 +203,7 @@ class DataF1Table(QWidget):
 
     def getList(self):
         listname = self.sender().text()
-        allcontent = openTab(listname)
+        allcontent = openTab(listname)#.openTab_act()
         clearLay(self.innerlay)
 
         category = str(listname).replace("_", " ").title()
@@ -276,7 +278,7 @@ class DataF1Table(QWidget):
         self.sortwid.setVisible(True)
 
         if "race" in self.currtab:
-            colname.append("id")
+            colname.append('order')
         sortlbl, self.sortbox = setComboBox(3, colname)
 
         order, self.asc, self.des, sortbtn = sortItems()
@@ -321,6 +323,9 @@ class DataF1Table(QWidget):
 
 
     def sorting(self, colname):
+        if 'order' in colname:
+            colname.remove('order')
+
         if self.asc.isChecked():
             direct = self.asc.text()
         else:

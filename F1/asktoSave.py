@@ -5,6 +5,10 @@ from F1.mySQL import startSQL
 
 def SQLsave(self, name, content, tabheader):
 
+    z = len(name)
+    name = str(name).lower()
+    category = name[0:z-5]
+
     ask = QMessageBox.question(self, "Saving Table", "Do you want to save table " + name + " ?",
                                QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
 
@@ -14,8 +18,9 @@ def SQLsave(self, name, content, tabheader):
 
         alltables = []
         for x in curs:
-            clear = (str(x)[1:-1].replace(",", ""))
-            alltables.append(clear.replace("'", ""))
+            clear = str(x)[2:-3]
+            if category in clear:
+                alltables.append(clear)
 
         if name not in alltables:
             createSQL(self, name, content, tabheader)

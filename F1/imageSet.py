@@ -9,19 +9,12 @@ def tabImage(picname, look, addimg):
     if look == 1:
         addimg.setPixmap(intropic.scaled(wd, ln, Qt.KeepAspectRatio))
 
-    elif look > 2:
+    elif look == 2:
+        addimg.setPixmap(intropic)
+        addimg.setAlignment(Qt.AlignCenter)
+
+    else:
         sqlpic = QLabel()
         sqlpic.setPixmap(intropic.scaled(wd, ln, Qt.KeepAspectRatio))
         sqlpic.setAlignment(Qt.AlignCenter)
-
-        if look == 3:
-            addimg.addWidget(sqlpic)
-        else:
-            loadlabl = QLabel("Scrape Data from the Website")
-            loadlabl.setObjectName("BlackLab")
-            loadlabl.setAlignment(Qt.AlignCenter)
-            addimg.addWidget(loadlabl)
-            addimg.addWidget(sqlpic)
-    else:
-        addimg.setPixmap(intropic)
-        addimg.setAlignment(Qt.AlignCenter)
+        addimg.addWidget(sqlpic)

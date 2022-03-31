@@ -2,9 +2,8 @@ from PyQt5.QtWidgets import QMessageBox
 from F1.mySQL import startSQL
 
 def createSQL(self, name, content, tabheader):
-    stock = []
-    mydb,curs = startSQL(False)
 
+    mydb,curs = startSQL(False)
     cols = len(tabheader)
     rows = len(content)
 
@@ -20,6 +19,7 @@ def createSQL(self, name, content, tabheader):
     datavalue = str(rep)[1:-1].replace("'", "")
     formula = "INSERT INTO " + name + " (" + datatag + ") VALUES (" + datavalue + ")"
 
+    stock = []
     for x in range(rows):
         line = []
         for y in range(cols):

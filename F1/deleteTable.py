@@ -10,7 +10,7 @@ def eraseTab(lay, deltab):
         mydb,curs = startSQL(False)
         curs.execute("DROP TABLE " + deltab)
         mydb.commit()
-        QMessageBox.about(lay, "Delete Table", "The table was erased from the database!")
+        QMessageBox.about(lay, "Delete Table", "Table " + deltab + " was erased from the database!")
         ask = True
     else:
         ask = False
