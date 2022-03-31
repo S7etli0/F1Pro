@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QLabel, QComboBox
 
-def setComboBox(check,sections):
+def setComboBox(check,sections,lay):
 
     if check == 1:
         x, y = "Set data:", "RedLab"
@@ -13,5 +13,8 @@ def setComboBox(check,sections):
     datalbl.setObjectName(y)
     combo = QComboBox()
     combo.addItems(sections)
+
+    lay.addWidget(datalbl)
+    lay.addWidget(combo)
     
     return datalbl, combo

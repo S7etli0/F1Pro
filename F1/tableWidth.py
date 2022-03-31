@@ -3,21 +3,22 @@ from PyQt5.QtWidgets import QHeaderView
 def tabWidth(self,table,titel,scroll,tabwid):
     header = table.horizontalHeader()
     tabcol = len(header)
+    titel = titel.text()
 
     max = 75
     for j in range(tabcol):
         table.resizeColumnToContents(j)
         max += table.columnWidth(j)
 
-    if 'Calendar' in titel.text():
+    if 'Calendar' in titel:
         for i in range(tabcol):
             header.setSectionResizeMode(i, QHeaderView.Stretch)
 
-    elif 'Team' in titel.text():
+    elif 'Team' in titel:
         header.setSectionResizeMode(1, QHeaderView.Stretch)
         header.setStretchLastSection(False)
 
-    elif 'Driver' in titel.text():
+    elif 'Driver' in titel:
         for i in range(tabcol-2):
             header.setSectionResizeMode(i, QHeaderView.Stretch)
         header.setSectionResizeMode(tabcol - 1, QHeaderView.ResizeToContents)

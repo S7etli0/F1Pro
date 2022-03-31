@@ -1,8 +1,8 @@
 import sys
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QWidget, QTabWidget, QApplication, QProgressBar, QScrollArea, \
-    QTableWidget, QGridLayout, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QMessageBox
+from PyQt5.QtWidgets import QWidget, QTabWidget, QApplication, QProgressBar, \
+    QGridLayout, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QMessageBox
 
 from F1.dataTitel import sqlTitel
 from F1.imageSet import tabImage
@@ -25,6 +25,7 @@ from F1.makeCombo import setComboBox
 from F1.tableWidth import tabWidth
 from F1.sortOptions import sortItems
 from F1.raceData import getRaceData
+from F1.newTable import setTable
 from F1.itemSetter import Visibility, AddingItems, layinWidget
 
 # check whole page
@@ -119,15 +120,11 @@ class DataF1Table(QWidget):
 
     def sideWEBtab(self):
         firstrow = QHBoxLayout()
-        self.spinlbl,self.spinyear = setYearLbl()
-        firstrow.addWidget(self.spinlbl)
-        firstrow.addWidget(self.spinyear)
+        self.spinlbl,self.spinyear = setYearLbl(firstrow)
 
         secrow = QHBoxLayout()
         sections = ['calendar', 'race wins', 'driver ranks', 'team ranks']
-        self.datalbl,self.combo = setComboBox(1,sections)
-        secrow.addWidget(self.datalbl)
-        secrow.addWidget(self.combo)
+        self.datalbl,self.combo = setComboBox(1,sections,secrow)
 
         doubwid, doublay = layinWidget()
         doubwid.setObjectName("BlackWid")
@@ -207,24 +204,20 @@ class DataF1Table(QWidget):
         tabImage('menues', 3, self.innerlay)
 
         twoinone = QHBoxLayout()
-        lbltag, self.yearlist = setComboBox(2,allcontent)
-        twoinone.addWidget(lbltag)
-        twoinone.addWidget(self.yearlist)
+        lbltag, self.yearlist = setComboBox(2,allcontent,twoinone)
 
         twolinewid = QWidget()
         twolinewid.setObjectName("RedWid")
         twolinewid.setLayout(twoinone)
 
-        btn = QPushButton("Load SQL Table")
-        btn.clicked.connect(lambda:self.getSQLtab(allcontent,listname))
-
+        sqlbtn = QPushButton("Load SQL Table")
+        sqlbtn.clicked.connect(lambda:self.getSQLtab(allcontent,listname))
         backbtn = QPushButton("Back to Menu")
         backbtn.clicked.connect(self.goBack)
-
         clearlbl = QLabel()
-        tabImage('btn-del', 1, self.eraselbl)
 
-        addtoInnerLay = [twolinewid,btn,backbtn,clearlbl,self.eraselbl,self.erase]
+        tabImage('btn-del', 1, self.eraselbl)
+        addtoInnerLay = [twolinewid,sqlbtn,backbtn,clearlbl,self.eraselbl,self.erase]
         AddingItems(addtoInnerLay,self.innerlay)
 
         Visibility([self.eraselbl, self.erase], False)
@@ -271,12 +264,12 @@ class DataF1Table(QWidget):
 
         if "race" in self.currtab:
             colname.append('order')
-        sortlbl, self.sortbox = setComboBox(3, colname)
+        sortlbl, self.sortbox = setComboBox(3, colname, self.sortlay)
 
         order, self.asc, self.des, sortbtn = sortItems()
         sortbtn.clicked.connect(lambda:self.sorting(colname))
 
-        addtoSortlay = [sortlbl, self.sortbox, order, self.asc, self.des, sortbtn]
+        addtoSortlay = [order, self.asc, self.des, sortbtn]
         AddingItems(addtoSortlay, self.sortlay)
 
         self.sortwid.setLayout(self.sortlay)
@@ -293,22 +286,8 @@ class DataF1Table(QWidget):
 
     def makeTable(self,cols,rows):
         self.tablemade = True
-        self.table = QTableWidget()
-        self.table.setRowCount(rows)
-        self.table.setColumnCount(cols)
-        self.table.horizontalHeader().setStretchLastSection(True)
-
-        self.tabwid, self.form = layinWidget()
-        self.form.addWidget(self.table)
-
-        self.scroll = QScrollArea()
-        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.form.addWidget(self.scroll)
-        self.scroll.setVisible(False)
+        self.table, self.tabwid, self.form, self.scroll = setTable(cols,rows)
         self.tablay.addWidget(self.tabwid)
-
-        if self.sortbool == True:
-            self.tabwid.setFixedHeight(370)
         tabHeight(self, rows, self.sortbool)
 
 
