@@ -1,6 +1,7 @@
 from F1.mySQL import startSQL
 
 
+# get the content of SQL file minus colheader
 def listSetRows(ref):
     mydb,curs = startSQL(False)
     curs.execute("SELECT * FROM " + ref)

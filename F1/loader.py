@@ -1,3 +1,4 @@
+# variables needed for scraping data from the F1 website
 def loadingData(data):
     if data == "calendar" or data == "race wins":
         links = ['races']
@@ -13,7 +14,7 @@ def loadingData(data):
     elif data == 'driver ranks':
         links = ['drivers']
         var = 7
-        tabheader = ['first_name', 'last_name', 'nationality', 'team_name', 'points']
+        tabheader = ['first_name', 'last_name', 'nation', 'team_name', 'points']
         numbers = [1, 2, 4, 5, 6]
     else:
         links = ['drivers', 'team']

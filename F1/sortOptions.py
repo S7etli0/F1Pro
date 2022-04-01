@@ -1,7 +1,8 @@
 from PyQt5.QtWidgets import QLabel, QRadioButton, QPushButton
 
-def sortItems():
 
+# items for the sorting menu
+def sortItems():
     order = QLabel("Order by:")
     order.setObjectName("RedLab")
     asc = QRadioButton("ASC")

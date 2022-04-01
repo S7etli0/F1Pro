@@ -3,6 +3,7 @@ from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QTableWidgetItem
 
 
+# input data in the table rows and the headers
 def fillTable(table, filler, myheader, vertic):
     tabrow = len(filler)
     tabcol = len(myheader)

@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QMessageBox
 from F1.mySQL import startSQL
 
 
+# SQL command for dropping a file
 def eraseTab(lay, deltab):
     ask = QMessageBox.question(lay, "Delete Table", "Do you want to drop table " + deltab + " ?",
                                QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)

@@ -1,5 +1,7 @@
 from PyQt5.QtWidgets import QHeaderView
 
+
+# resize the table sections and adjust the table width
 def tabWidth(self,table,titel,scroll,tabwid):
     header = table.horizontalHeader()
     tabcol = len(header)

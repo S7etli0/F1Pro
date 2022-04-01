@@ -1,7 +1,8 @@
 from PyQt5.QtWidgets import QLabel, QComboBox
 
-def setComboBox(check,sections,lay):
 
+# create label & combobox to add them to layout
+def setComboBox(check,sections,lay):
     if check == 1:
         x, y = "Set data:", "RedLab"
     elif check == 2:

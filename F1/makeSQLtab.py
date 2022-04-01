@@ -1,6 +1,8 @@
 from PyQt5.QtWidgets import QMessageBox
 from F1.mySQL import startSQL
 
+
+# use the data to create a SQL file
 def createSQL(self, name, content, tabheader):
 
     mydb,curs = startSQL(False)

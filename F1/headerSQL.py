@@ -1,6 +1,7 @@
 from F1.mySQL import startSQL
 
 
+# get column names / count from a SQL file
 def setSQLheader(ref):
     mydb,curs = startSQL(False)
 

@@ -1,5 +1,7 @@
 from configparser import ConfigParser
 
+
+# use hidden data from venv
 def readConfig(file,section):
     parser = ConfigParser()
     parser.read(file)

@@ -1,3 +1,4 @@
+# adjust the height of the table
 def tabHeight(lay, tabrow, check):
 
     if check==True:

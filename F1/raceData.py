@@ -1,6 +1,7 @@
 from F1.teams import TeamContent
 
 
+# preparing the scraped data for input in the table
 def getRaceData(table,data,var,numbers,sector):
     content = []
 

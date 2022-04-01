@@ -2,6 +2,8 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QLabel
 
+
+# change the image in the table widget
 def tabImage(picname, look, addimg):
     intropic = QPixmap("images/f1-" + picname + ".jpg")
     wd, ln = 260, 110

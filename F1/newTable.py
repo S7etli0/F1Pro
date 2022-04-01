@@ -2,8 +2,9 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QTableWidget, QScrollArea
 from F1.itemSetter import layinWidget
 
-def setTable(cols,rows):
 
+# create a table to display the data
+def setTable(cols,rows):
     table = QTableWidget()
     table.setRowCount(rows)
     table.setColumnCount(cols)

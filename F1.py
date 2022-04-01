@@ -4,12 +4,14 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QTabWidget, QApplication, QProgressBar, \
     QGridLayout, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QMessageBox
 
+
+# list of the modules used by the main class
 from F1.dataTitel import sqlTitel
 from F1.imageSet import tabImage
 from F1.cssLay import css_Style
 from F1.loader import loadingData
 from F1.dataScrape import WebScrape
-from F1.tabList import listSetRows
+from F1.tableData import listSetRows
 from F1.height import tabHeight
 from F1.loadBar import progressload
 from F1.adjustLay import clearLay, stretchLay
@@ -59,13 +61,6 @@ class DataF1Table(QWidget):
 
     def gridStructure(self):
         loadwid, self.layload = layinWidget()
-
-        loadlabl = QLabel("Scrape Data from the Website")
-        loadlabl.setObjectName("BlackLab")
-        loadlabl.setAlignment(Qt.AlignCenter)
-        self.layload.addWidget(loadlabl)
-        tabImage('menu', 3, self.layload)
-
         sqltabs, self.innerlay = layinWidget()
 
         maintab = QTabWidget()
@@ -84,12 +79,14 @@ class DataF1Table(QWidget):
         self.goBack()
 
 
+    # settings for the SQL menu
     def mainVariables(self):
         self.tablemade = False
         self.sortbool = False
         self.changer=""
-        
+
         self.eraselbl = QLabel()
+        tabImage('btn-del', 1, self.eraselbl)
         self.erase = QPushButton("Erase SQL Table")
         self.erase.clicked.connect(lambda:self.deletion())
 
@@ -99,6 +96,7 @@ class DataF1Table(QWidget):
         self.sortlay.setAlignment(Qt.AlignCenter)
 
 
+    # layout for displaying data in a table format
     def setMainTab(self):
         self.titel = QLabel("The Results You are Looking For will Appear in a Table")
         self.titel.setAlignment(Qt.AlignCenter)
@@ -118,7 +116,14 @@ class DataF1Table(QWidget):
         AddingItems([self.sortwid,self.loadtab],self.mainwid)
 
 
+    # menu for scraping data about F1
     def sideWEBtab(self):
+        loadlabl = QLabel("Scrape Data from the Website")
+        loadlabl.setObjectName("BlackLab")
+        loadlabl.setAlignment(Qt.AlignCenter)
+        self.layload.addWidget(loadlabl)
+        tabImage('menu', 3, self.layload)
+
         firstrow = QHBoxLayout()
         self.spinlbl,self.spinyear = setYearLbl(firstrow)
 
@@ -131,9 +136,9 @@ class DataF1Table(QWidget):
         doublay.addLayout(firstrow)
         doublay.addLayout(secrow)
 
-        btn = QPushButton("Load Data in Table")
-        btn.setObjectName("Mar")
-        btn.clicked.connect(self.race_results)
+        loadbtn = QPushButton("Load Data in Table")
+        loadbtn.setObjectName("Mar")
+        loadbtn.clicked.connect(self.race_results)
 
         self.savelbl = QLabel()
         tabImage('saves', 1, self.savelbl)
@@ -145,11 +150,12 @@ class DataF1Table(QWidget):
         self.savedata.setVisible(False)
 
         clearlab = QLabel()
-        addtoLayload = [doubwid,btn,clearlab,self.savelbl,self.savedata]
+        addtoLayload = [doubwid,loadbtn,clearlab,self.savelbl,self.savedata]
         AddingItems(addtoLayload,self.layload)
         self.layload.addStretch()
 
 
+    # extract data from the F1 website and placing it in a table
     def race_results(self):
         if self.sortbool == True:
             clearLay(self.sortlay)
@@ -157,26 +163,26 @@ class DataF1Table(QWidget):
             Visibility([self.sortwid, self.erase,self.eraselbl],False)
 
         calendar = int(self.spinyear.text())
-        data = str(self.combo.currentText())
+        datatype = str(self.combo.currentText())
 
-        if data == "team ranks" and calendar < 1958:
+        if datatype == "team ranks" and calendar < 1958:
             QMessageBox.about(self, "Data Error", "No team Competitions before 1958!")
         else:
             Visibility([self.savedata,self.savelbl],True)
-            links, var, self.tabheader, cols, numbers = loadingData(data)
+            links, var, self.tabheader, cols, numbers = loadingData(datatype)
 
             for sector in links:
                 table = WebScrape(calendar, sector)
                 progressload(self.loadtab)
-                self.content, rows = getRaceData(table,data,var,numbers,sector)
+                self.content, rows = getRaceData(table,datatype,var,numbers,sector)
 
             if self.tablemade != False:
                 self.tablay.removeWidget(self.tabwid)
             self.makeTable(cols,rows)
             self.tabwid.setObjectName("BlackWid")
 
-            tabImage(data.replace(" ", "-"), 2, self.introlbl)
-            self.titletext = data.title() + " for the " + str(calendar)
+            tabImage(datatype.replace(" ", "-"), 2, self.introlbl)
+            self.titletext = datatype.title() + " for the " + str(calendar)
             self.titel.setText("List of the " + self.titletext + " Formula 1 Season")
 
             vertic = []
@@ -190,6 +196,16 @@ class DataF1Table(QWidget):
         self.goBack()
 
 
+    # open the SQL menu
+    def goBack(self):
+        clearLay(self.innerlay)
+        buttons = backtoSQL(self.innerlay)
+        for btn in buttons:
+            btn.clicked.connect(self.getList)
+        stretchLay(self.innerlay)
+
+
+    # layout for the chosen SQL files category
     def getList(self):
         listname = self.sender().text()
         allcontent = openTab(listname)#.openTab_act()
@@ -216,7 +232,6 @@ class DataF1Table(QWidget):
         backbtn.clicked.connect(self.goBack)
         clearlbl = QLabel()
 
-        tabImage('btn-del', 1, self.eraselbl)
         addtoInnerLay = [twolinewid,sqlbtn,backbtn,clearlbl,self.eraselbl,self.erase]
         AddingItems(addtoInnerLay,self.innerlay)
 
@@ -224,6 +239,7 @@ class DataF1Table(QWidget):
         stretchLay(self.innerlay)
 
 
+    # opening a saved SQL file in the table
     def getSQLtab(self,allcontent,listname):
 
         if self.sortbool != True:
@@ -256,10 +272,11 @@ class DataF1Table(QWidget):
                 self.sortbool = False
 
             if self.sortbool == False:
-                self.resetSQLtab(colname)
+                self.SQLsorter(colname)
 
 
-    def resetSQLtab(self,colname):
+    # menu for sorting the data in the table
+    def SQLsorter(self,colname):
         self.sortwid.setVisible(True)
 
         if "race" in self.currtab:
@@ -276,14 +293,7 @@ class DataF1Table(QWidget):
         self.sortbool = True
 
 
-    def goBack(self):
-        clearLay(self.innerlay)
-        buttons = backtoSQL(self.innerlay)
-        for btn in buttons:
-            btn.clicked.connect(self.getList)
-        stretchLay(self.innerlay)
-
-
+    # adjust a new table to the mainwidget
     def makeTable(self,cols,rows):
         self.tablemade = True
         self.table, self.tabwid, self.form, self.scroll = setTable(cols,rows)
@@ -291,20 +301,21 @@ class DataF1Table(QWidget):
         tabHeight(self, rows, self.sortbool)
 
 
+    # input the sorted data in the table
     def sorting(self, colname):
         if 'order' in colname:
             colname.remove('order')
 
+        direct = "DESC"
         if self.asc.isChecked():
-            direct = self.asc.text()
-        else:
-            direct = self.des.text()
+            direct = "ASC"
 
         sorter = self.sortbox.currentText()
         cellsdata,vertic = sortData(self.currtab,sorter,direct)
         fillTable(self.table, cellsdata, colname, vertic)
 
 
+    # delete a saved SQL file
     def deletion(self):
         ask = eraseTab(self,self.currtab)
         if ask==True:
@@ -313,6 +324,7 @@ class DataF1Table(QWidget):
             clearLay(self.sortlay)
 
 
+    # save table data as SQL file
     def saving(self):
         name = (self.titletext.replace(" for the ", "_")).replace(" ", "_")
         ask = SQLsave(self, name, self.content, self.tabheader)

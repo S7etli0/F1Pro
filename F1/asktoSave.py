@@ -3,6 +3,7 @@ from F1.makeSQLtab import createSQL
 from F1.mySQL import startSQL
 
 
+# ask to save and check if the file exists
 def SQLsave(self, name, content, tabheader):
 
     z = len(name)

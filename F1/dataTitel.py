@@ -1,3 +1,4 @@
+# change the title of the table widget
 def sqlTitel(currtab):
     mytitle = currtab.split("_")
 

@@ -1,6 +1,8 @@
 import datetime
 from PyQt5.QtWidgets import QLabel, QSpinBox
 
+
+# create label & spinbox to add them to layout
 def setYearLbl(lay):
     spinlbl = QLabel("Set year:")
     spinlbl.setObjectName("RedLab")

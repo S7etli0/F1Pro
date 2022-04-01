@@ -1,3 +1,4 @@
+# preparing the race team data for input in the table
 def TeamContent(sector,numbers,racelist,rowdatas):
     if sector == "drivers":
 

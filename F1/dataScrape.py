@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup as soup
 
 
+# scrape data from the F1 website
 def WebScrape(calendar, sector):
     website = "https://www.formula1.com/en/results.html/{}/{}.html".format(calendar, sector)
     rec = requests.get(website)

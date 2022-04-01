@@ -1,3 +1,4 @@
+# setting the app display
 css_Style = """
 
     QWidget#RedWid{
