@@ -1,6 +1,6 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QTableWidget, QScrollArea
-from F1.itemSetter import layinWidget
+from F1.newWidget import layinWidget
 
 
 # create a table to display the data
@@ -10,7 +10,7 @@ def setTable(cols,rows):
     table.setColumnCount(cols)
     table.horizontalHeader().setStretchLastSection(True)
 
-    tabwid, form = layinWidget()
+    tabwid, form = layinWidget("V")
     form.addWidget(table)
 
     scroll = QScrollArea()

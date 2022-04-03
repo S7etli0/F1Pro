@@ -28,7 +28,9 @@ from F1.tableWidth import tabWidth
 from F1.sortOptions import sortItems
 from F1.raceData import getRaceData
 from F1.newTable import setTable
-from F1.itemSetter import Visibility, AddingItems, layinWidget
+from F1.itemSetter import changeItems
+from F1.newWidget import layinWidget
+
 
 # check whole page
 # check modules
@@ -60,15 +62,15 @@ class DataF1Table(QWidget):
 
 
     def gridStructure(self):
-        loadwid, self.layload = layinWidget()
-        sqltabs, self.innerlay = layinWidget()
+        loadwid, self.layload = layinWidget("V")
+        sqltabs, self.innerlay = layinWidget("V")
 
         maintab = QTabWidget()
         maintab.setMaximumWidth(270)
         maintab.addTab(loadwid, "Load Data")
         maintab.addTab(sqltabs, "View Data")
 
-        tabright, self.mainwid = layinWidget()
+        tabright, self.mainwid = layinWidget("V")
         tabright.setObjectName("White")
 
         mygrid = QGridLayout()
@@ -90,10 +92,10 @@ class DataF1Table(QWidget):
         self.erase = QPushButton("Erase SQL Table")
         self.erase.clicked.connect(lambda:self.deletion())
 
-        self.sortwid = QWidget()
+        self.sortwid,self.sortlay = layinWidget("H")
         self.sortwid.setObjectName("BlackWid")
-        self.sortlay = QHBoxLayout()
         self.sortlay.setAlignment(Qt.AlignCenter)
+        self.sortwid.setVisible(False)
 
 
     # layout for displaying data in a table format
@@ -101,16 +103,16 @@ class DataF1Table(QWidget):
         self.titel = QLabel("The Results You are Looking For will Appear in a Table")
         self.titel.setAlignment(Qt.AlignCenter)
         self.titel.setObjectName("Titel")
-        
+
         self.introlbl = QLabel()
         tabImage('startup', 2, self.introlbl)
         self.tablay = QVBoxLayout()
 
         self.loadtab = QProgressBar()
         self.loadtab.setVisible(False)
-        AddingItems([self.titel,self.introlbl],self.mainwid)
+        changeItems([self.titel,self.introlbl]).AddingItems(self.mainwid)
         self.mainwid.addLayout(self.tablay)
-        AddingItems([self.sortwid,self.loadtab],self.mainwid)
+        changeItems([self.sortwid,self.loadtab]).AddingItems(self.mainwid)
 
 
     # menu for scraping data about F1
@@ -128,7 +130,7 @@ class DataF1Table(QWidget):
         sections = ['calendar', 'race wins', 'driver ranks', 'team ranks']
         self.datalbl,self.combo = setComboBox(1,sections,secrow)
 
-        doubwid, doublay = layinWidget()
+        doubwid, doublay = layinWidget("V")
         doubwid.setObjectName("BlackWid")
         doublay.addLayout(firstrow)
         doublay.addLayout(secrow)
@@ -139,25 +141,26 @@ class DataF1Table(QWidget):
 
         self.savelbl = QLabel()
         tabImage('saves', 1, self.savelbl)
-        self.savelbl.setVisible(False)
 
         self.savedata = QPushButton("Create SQL Table")
         self.savedata.clicked.connect(self.saving)
         self.mainwid.addWidget(self.savedata)
-        self.savedata.setVisible(False)
+
+        changeItems([self.savelbl, self.savedata]).Visibility(False)
 
         clearlab = QLabel()
         addtoLayload = [doubwid,loadbtn,clearlab,self.savelbl,self.savedata]
-        AddingItems(addtoLayload,self.layload)
+        changeItems(addtoLayload).AddingItems(self.layload)
         self.layload.addStretch()
 
 
     # extract data from the F1 website and placing it in a table
     def race_results(self):
+        self.changer = ""
         if self.sortbool == True:
             changeLay(self.sortlay).clearLay()
             self.sortbool = False
-            Visibility([self.sortwid, self.erase,self.eraselbl],False)
+            changeItems([self.sortwid, self.erase,self.eraselbl]).Visibility(False)
 
         calendar = int(self.spinyear.text())
         datatype = str(self.combo.currentText())
@@ -165,7 +168,7 @@ class DataF1Table(QWidget):
         if datatype == "team ranks" and calendar < 1958:
             QMessageBox.about(self, "Data Error", "No team Competitions before 1958!")
         else:
-            Visibility([self.savedata,self.savelbl],True)
+            changeItems([self.savedata,self.savelbl]).Visibility(True)
             links, var, self.tabheader, cols, numbers = loadingData(datatype)
 
             for sector in links:
@@ -216,10 +219,8 @@ class DataF1Table(QWidget):
         self.innerlay.addWidget(maintag)
         tabImage('menues', 3, self.innerlay)
 
-        twoinone = QHBoxLayout()
+        twolinewid, twoinone = layinWidget("H")
         lbltag, self.yearlist = setComboBox(2,allcontent,twoinone)
-
-        twolinewid = QWidget()
         twolinewid.setObjectName("RedWid")
         twolinewid.setLayout(twoinone)
 
@@ -230,9 +231,9 @@ class DataF1Table(QWidget):
         clearlbl = QLabel()
 
         addtoInnerLay = [twolinewid,sqlbtn,backbtn,clearlbl,self.eraselbl,self.erase]
-        AddingItems(addtoInnerLay,self.innerlay)
+        changeItems(addtoInnerLay).AddingItems(self.innerlay)
 
-        Visibility([self.eraselbl, self.erase], False)
+        changeItems([self.eraselbl, self.erase]).Visibility( False)
         changeLay(self.innerlay).stretchLay()
 
 
@@ -241,7 +242,7 @@ class DataF1Table(QWidget):
 
         if self.sortbool != True:
             self.sortbool = True
-            Visibility([self.savedata, self.savelbl], False)
+            changeItems([self.savedata, self.savelbl]).Visibility(False)
 
         if len(allcontent) == 0:
             QMessageBox.about(self,"Empty Database","No tables are Saved in this Category!")
@@ -259,16 +260,13 @@ class DataF1Table(QWidget):
             titletext = sqlTitel(self.currtab)
             self.titel.setText(titletext)
 
-            Visibility([self.erase,self.eraselbl],True)
+            changeItems([self.erase,self.eraselbl]).Visibility(True)
             fillTable(self.table, cellsdata, colname, vertic)
             tabWidth(self,self.table,self.titel,self.scroll,self.tabwid)
 
             if listname!=self.changer:
                 self.changer = listname
                 changeLay(self.sortlay).clearLay()
-                self.sortbool = False
-
-            if self.sortbool == False:
                 self.SQLsorter(colname)
 
 
@@ -284,10 +282,7 @@ class DataF1Table(QWidget):
         sortbtn.clicked.connect(lambda:self.sorting(colname))
 
         addtoSortlay = [order, self.asc, self.des, sortbtn]
-        AddingItems(addtoSortlay, self.sortlay)
-
-        self.sortwid.setLayout(self.sortlay)
-        self.sortbool = True
+        changeItems(addtoSortlay).AddingItems(self.sortlay)
 
 
     # adjust a new table to the mainwidget

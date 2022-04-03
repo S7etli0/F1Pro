@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import QLabel, QComboBox
+from F1.itemSetter import changeItems
 
 
 # create label & combobox to add them to layout
@@ -15,7 +16,6 @@ def setComboBox(check,sections,lay):
     combo = QComboBox()
     combo.addItems(sections)
 
-    lay.addWidget(datalbl)
-    lay.addWidget(combo)
+    changeItems([datalbl,combo]).AddingItems(lay)
     
     return datalbl, combo

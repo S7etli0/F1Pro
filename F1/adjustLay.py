@@ -1,4 +1,5 @@
-from F1.itemSetter import layinWidget
+from F1.newWidget import layinWidget
+
 
 class changeLay():
     def __init__(self,lay):
@@ -12,7 +13,7 @@ class changeLay():
 
     # add a stretch to the layout via widget
     def stretchLay(self):
-        stretch, strlay = layinWidget()
+        stretch, strlay = layinWidget("V")
         strlay.addStretch()
         self.lay.addWidget(stretch)
 

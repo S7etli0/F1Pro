@@ -1,7 +1,8 @@
 from PyQt5.QtCore import Qt
 from F1.imageSet import tabImage
-from F1.itemSetter import layinWidget
+from F1.newWidget import layinWidget
 from PyQt5.QtWidgets import QLabel, QPushButton
+
 
 # open the SQL menu & choose a category
 def backtoSQL(innerlay):
@@ -12,7 +13,7 @@ def backtoSQL(innerlay):
     tabImage('menues', 3, innerlay)
 
     sections = ['calendar', 'race_wins', 'driver_ranks', 'team_ranks']
-    btnwid, btnlay = layinWidget()
+    btnwid, btnlay = layinWidget("V")
 
     buttons = []
     for x in sections:
