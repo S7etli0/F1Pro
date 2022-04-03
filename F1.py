@@ -14,7 +14,7 @@ from F1.dataScrape import WebScrape
 from F1.tableData import listSetRows
 from F1.height import tabHeight
 from F1.loadBar import progressload
-from F1.adjustLay import clearLay, stretchLay
+from F1.adjustLay import changeLay
 from F1.deleteTable import eraseTab
 from F1.asktoSave import SQLsave
 from F1.dataSorter import sortData
@@ -107,10 +107,7 @@ class DataF1Table(QWidget):
         self.tablay = QVBoxLayout()
 
         self.loadtab = QProgressBar()
-        self.loadtab.setMinimum(0)
-        self.loadtab.setMaximum(10)
         self.loadtab.setVisible(False)
-
         AddingItems([self.titel,self.introlbl],self.mainwid)
         self.mainwid.addLayout(self.tablay)
         AddingItems([self.sortwid,self.loadtab],self.mainwid)
@@ -158,7 +155,7 @@ class DataF1Table(QWidget):
     # extract data from the F1 website and placing it in a table
     def race_results(self):
         if self.sortbool == True:
-            clearLay(self.sortlay)
+            changeLay(self.sortlay).clearLay()
             self.sortbool = False
             Visibility([self.sortwid, self.erase,self.eraselbl],False)
 
@@ -173,7 +170,7 @@ class DataF1Table(QWidget):
 
             for sector in links:
                 table = WebScrape(calendar, sector)
-                progressload(self.loadtab)
+                progressload(self.loadtab,10).activate()
                 self.content, rows = getRaceData(table,datatype,var,numbers,sector)
 
             if self.tablemade != False:
@@ -198,18 +195,18 @@ class DataF1Table(QWidget):
 
     # open the SQL menu
     def goBack(self):
-        clearLay(self.innerlay)
+        changeLay(self.innerlay).clearLay()
         buttons = backtoSQL(self.innerlay)
         for btn in buttons:
             btn.clicked.connect(self.getList)
-        stretchLay(self.innerlay)
+        changeLay(self.innerlay).stretchLay()
 
 
     # layout for the chosen SQL files category
     def getList(self):
         listname = self.sender().text()
         allcontent = openTab(listname)#.openTab_act()
-        clearLay(self.innerlay)
+        changeLay(self.innerlay).clearLay()
 
         category = str(listname).replace("_", " ").title()
         maintag = QLabel("Category " + category + " Tables")
@@ -236,7 +233,7 @@ class DataF1Table(QWidget):
         AddingItems(addtoInnerLay,self.innerlay)
 
         Visibility([self.eraselbl, self.erase], False)
-        stretchLay(self.innerlay)
+        changeLay(self.innerlay).stretchLay()
 
 
     # opening a saved SQL file in the table
@@ -268,7 +265,7 @@ class DataF1Table(QWidget):
 
             if listname!=self.changer:
                 self.changer = listname
-                clearLay(self.sortlay)
+                changeLay(self.sortlay).clearLay()
                 self.sortbool = False
 
             if self.sortbool == False:
@@ -317,11 +314,11 @@ class DataF1Table(QWidget):
 
     # delete a saved SQL file
     def deletion(self):
-        ask = eraseTab(self,self.currtab)
+        ask = eraseTab(self,self.currtab).asktoclear()
         if ask==True:
             self.goBack()
             self.changer=""
-            clearLay(self.sortlay)
+            changeLay(self.sortlay).clearLay()
 
 
     # save table data as SQL file

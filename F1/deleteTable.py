@@ -3,17 +3,22 @@ from F1.mySQL import startSQL
 
 
 # SQL command for dropping a file
-def eraseTab(lay, deltab):
-    ask = QMessageBox.question(lay, "Delete Table", "Do you want to drop table " + deltab + " ?",
-                               QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+class eraseTab():
+    def __init__(self,lay, deltab):
+        self.lay = lay
+        self.deltab = deltab
 
-    if ask == QMessageBox.Yes:
-        mydb,curs = startSQL(False)
-        curs.execute("DROP TABLE " + deltab)
-        mydb.commit()
-        QMessageBox.about(lay, "Delete Table", "Table " + deltab + " was erased from the database!")
-        ask = True
-    else:
-        ask = False
+    def asktoclear(self):
+        ask = QMessageBox.question(self.lay, "Delete Table", "Do you want to drop table " + self.deltab + " ?",
+                                   QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
 
-    return ask
+        if ask == QMessageBox.Yes:
+            mydb, curs = startSQL(False)
+            curs.execute("DROP TABLE " + self.deltab)
+            mydb.commit()
+            QMessageBox.about(self.lay, "Delete Table", "Table " + self.deltab + " was erased from the database!")
+            ask = True
+        else:
+            ask = False
+
+        return ask

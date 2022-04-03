@@ -1,15 +1,22 @@
 import time
 
-
 # loading the progress bar
-def progressload(loadtab):
-    bars = 12
-    while bars:
-        time.sleep(0.15)
-        bars -= 1
-        loadtab.setVisible(True)
+class progressload():
+    def __init__(self,loadtab,num):
+        self.num = num
+        self.loadtab = loadtab
 
-        if bars != 0:
-            loadtab.setValue(11 - bars)
-        else:
-            loadtab.setVisible(False)
+    def activate(self):
+        self.loadtab.setMinimum(0)
+        self.loadtab.setMaximum(self.num)
+
+        bars = self.num + 2
+        while bars:
+            time.sleep(0.15)
+            bars -= 1
+            self.loadtab.setVisible(True)
+
+            if bars != 0:
+                self.loadtab.setValue(self.num + 1 - bars)
+            else:
+                self.loadtab.setVisible(False)
