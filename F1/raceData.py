@@ -14,7 +14,6 @@ def getRaceData(table,data,var,numbers,sector):
         rowdatas = []
 
         if data == "team ranks":
-
             if sector == "drivers":
                 numbers = TeamContent(numbers).Drivers(racelist)
             else:

@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import QHeaderView
+from F1.width import layWidth
 
 
 # resize the table sections and adjust the table width
@@ -7,10 +8,7 @@ def tabWidth(self,table,titel,scroll,tabwid):
     tabcol = len(header)
     titel = titel.text()
 
-    max = 75
-    for j in range(tabcol):
-        table.resizeColumnToContents(j)
-        max += table.columnWidth(j)
+    max = layWidth(table).sections(tabcol)
 
     if 'Calendar' in titel:
         for i in range(tabcol):
@@ -28,12 +26,4 @@ def tabWidth(self,table,titel,scroll,tabwid):
     else:
         header.setSectionResizeMode(QHeaderView.ResizeToContents)
 
-    self.setGeometry(100, 100, 0, 0)
-    if max <= 700:
-        tabwid.setMinimumWidth(max)
-        self.setFixedWidth(max + 350)
-    else:
-        scroll.setWidget(table)
-        scroll.setVisible(True)
-        table.setMinimumWidth(max)
-        self.setFixedWidth(1050)
+    layWidth(table).fixedWidth(self,scroll,tabwid,max)

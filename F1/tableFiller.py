@@ -19,15 +19,15 @@ def fillTable(table, filler, myheader, vertic):
             if rw % 2 == 0:
                 table.item(rw, cl).setBackground(color)
 
-    style = "::section {background-color: red; color:white; font-size: 12pt; font-weight:bold;}"
-
     header = table.horizontalHeader()
     header.setFixedHeight(40)
     table.setHorizontalHeaderLabels(myheader)
     header.setDefaultAlignment(Qt.AlignHCenter)
-    header.setStyleSheet(style)
 
     sidehead = table.verticalHeader()
     sidehead.setFixedWidth(35)
     sidehead.setDefaultAlignment(Qt.AlignCenter)
-    sidehead.setStyleSheet(style)
+
+    style = "::section {background-color: red; color:white; font-size: 12pt; font-weight:bold;}"
+    for h in [header,sidehead]:
+        h.setStyleSheet(style)
