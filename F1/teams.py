@@ -8,7 +8,6 @@ class TeamContent():
         if racelist[5] not in self.numbers:
             self.numbers[racelist[5]] = str(racelist[1]) + " " + str(racelist[2])
         else:
-            # elif str(numbers[racelist[5]]).count('&') =< 3:
             self.numbers[racelist[5]] += " & " + str(racelist[1]) + " " + str(racelist[2])
         return self.numbers
 

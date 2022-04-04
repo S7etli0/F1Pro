@@ -32,25 +32,17 @@ from F1.itemSetter import changeItems
 from F1.newWidget import layinWidget
 
 
-# check whole page
-# check modules
-# make classes
-# out methods, def
-# remove repeats
-# descriptions
-# set values
-# presentation
-
 class DataF1Table(QWidget):
     def __init__(self):
         super().__init__()
         self.VisualTab()
 
 
+    # display and main methods used by the F1 class
     def VisualTab(self):
         self.setWindowTitle("Formula1 Database")
         self.setWindowIcon(QIcon("images/f1-logo.png"))
-        self.setMaximumSize(925, 435)   #670
+        self.setMaximumSize(925, 435)
         self.move(100, 100)
 
         self.setObjectName("RedWid")
@@ -61,7 +53,9 @@ class DataF1Table(QWidget):
         self.show()
 
 
+    # settings a gridlayout and main widgets
     def gridStructure(self):
+        mygrid = QGridLayout()
         loadwid, self.layload = layinWidget("V")
         sqltabs, self.innerlay = layinWidget("V")
 
@@ -73,11 +67,9 @@ class DataF1Table(QWidget):
         tabright, self.mainwid = layinWidget("V")
         tabright.setObjectName("White")
 
-        mygrid = QGridLayout()
         mygrid.addWidget(maintab, 0, 0)
         mygrid.addWidget(tabright, 0, 1)
         self.setLayout(mygrid)
-
         self.goBack()
 
 
@@ -208,7 +200,7 @@ class DataF1Table(QWidget):
     # layout for the chosen SQL files category
     def getList(self):
         listname = self.sender().text()
-        allcontent = openTab(listname)#.openTab_act()
+        allcontent = openTab(listname)
         changeLay(self.innerlay).clearLay()
 
         category = str(listname).replace("_", " ").title()
@@ -309,7 +301,7 @@ class DataF1Table(QWidget):
 
     # delete a saved SQL file
     def deletion(self):
-        ask = eraseTab(self,self.currtab).asktoclear()
+        ask = eraseTab(self,self.currtab)
         if ask==True:
             self.goBack()
             self.changer=""

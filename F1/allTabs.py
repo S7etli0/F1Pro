@@ -1,25 +1,18 @@
 from F1.mySQL import startSQL
 
-# collect the names of all sql tables in the chosen category
 
-# class openTab():
-#     def __init__(self,name):
-#         self.name = name
-#
-#
-#     def openTab_act(self):
-#         name = self.name
-
+# collect the names of SQL tables in the chosen category
 def openTab(category):
-        mydb, curs = startSQL(True)
-        curs.execute("SHOW TABLES")
+    mydb, curs = startSQL(True)
+    curs.execute("SHOW TABLES")
 
-        allcontent = []
-        for x in curs:
-            titel = str(x)[2:-3]
+    allcontent = []
+    for x in curs:
+        titel = str(x)[2:-3]
 
-            if category in titel:
-                z = len(titel)
-                allcontent.append(titel[z-4:z])
+        if category in titel:
+            z = len(titel)
+            allcontent.append(titel[z - 4:z])
 
-        return allcontent
+    return allcontent
+
