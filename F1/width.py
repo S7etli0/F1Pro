@@ -12,13 +12,13 @@ class layWidth():
 
     def fixedWidth(self, lay, scroll, tabwid, max):
         lay.setGeometry(100, 100, 0, 0)
-        if max <= 700:
+        if max <= 670:
             tabwid.setMinimumWidth(max)
             lay.setFixedWidth(max + 350)
         else:
             scroll.setWidget(self.table)
             scroll.setVisible(True)
             self.table.setMinimumWidth(max)
-            lay.setFixedWidth(1050)
+            lay.setFixedWidth(1020)
 
 

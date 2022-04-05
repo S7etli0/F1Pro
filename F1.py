@@ -42,7 +42,7 @@ class DataF1Table(QWidget):
     def VisualTab(self):
         self.setWindowTitle("Formula1 Database")
         self.setWindowIcon(QIcon("images/f1-logo.png"))
-        self.setMaximumSize(925, 435)
+        self.setMaximumSize(975, 435)
         self.move(100, 100)
 
         self.setObjectName("RedWid")
@@ -209,7 +209,7 @@ class DataF1Table(QWidget):
         maintag.setObjectName("BlackLab")
         maintag.setAlignment(Qt.AlignCenter)
         self.innerlay.addWidget(maintag)
-        tabImage('menues', 3, self.innerlay)
+        tabImage('sql-menu', 3, self.innerlay)
 
         twolinewid, twoinone = layinWidget("H")
         lbltag, self.yearlist = setComboBox(2,allcontent,twoinone)

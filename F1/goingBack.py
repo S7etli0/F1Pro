@@ -10,7 +10,7 @@ def backtoSQL(innerlay):
     sqltitel.setObjectName("BlackLab")
     sqltitel.setAlignment(Qt.AlignCenter)
     innerlay.addWidget(sqltitel)
-    tabImage('menues', 3, innerlay)
+    tabImage('sql-menu', 3, innerlay)
 
     sections = ['calendar', 'race_wins', 'driver_ranks', 'team_ranks']
     btnwid, btnlay = layinWidget("V")

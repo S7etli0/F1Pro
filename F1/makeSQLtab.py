@@ -7,12 +7,10 @@ def createSQL(self, name, content, tabheader):
     mydb,curs = startSQL(False)
     cols = len(tabheader)
 
+    rep = []
     curs.execute("CREATE TABLE IF NOT EXISTS " + name + " (id int PRIMARY KEY AUTO_INCREMENT)")
     for x in range(cols):
         curs.execute("ALTER TABLE " + name + " ADD " + tabheader[x] + " VARCHAR(125)")
-
-    rep = []
-    for x in range(cols):
         rep.append("%s")
 
     datatag = str(tabheader)[1:-1].replace("'", "")
