@@ -3,6 +3,7 @@ class layWidth():
     def __init__(self,table):
         self.table = table
 
+    # total width of the table
     def sections(self, tabcol):
         max = 75
         for j in range(tabcol):
@@ -10,6 +11,7 @@ class layWidth():
             max += self.table.columnWidth(j)
         return max
 
+    # adjust the width of the app lay
     def fixedWidth(self, lay, scroll, tabwid, max):
         lay.setGeometry(100, 100, 0, 0)
         if max <= 670:

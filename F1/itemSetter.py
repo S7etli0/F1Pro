@@ -2,7 +2,7 @@ class changeItems():
     def __init__(self,allitems):
         self.allitems = allitems
 
-    # add items to a widget
+    # add widgets to a layout
     def AddingItems(self,lay):
         self.lay = lay
         for item in self.allitems:

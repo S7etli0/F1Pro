@@ -9,9 +9,9 @@ from PyQt5.QtWidgets import QWidget, QTabWidget, QApplication, QProgressBar, \
 from F1.dataTitel import sqlTitel
 from F1.imageSet import tabImage
 from F1.cssLay import css_Style
-from F1.loader import loadingData
+from F1.loadvars import loadingData
 from F1.dataScrape import WebScrape
-from F1.tableData import listSetRows
+from F1.sqltabData import setRows
 from F1.height import tabHeight
 from F1.loadBar import progressload
 from F1.adjustLay import changeLay
@@ -21,7 +21,7 @@ from F1.dataSorter import sortData
 from F1.tableFiller import fillTable
 from F1.headerSQL import setSQLheader
 from F1.allTabs import openTab
-from F1.goingBack import backtoSQL
+from F1.gotoSQL import backtoSQL
 from F1.setYear import setYearLbl
 from F1.makeCombo import setComboBox
 from F1.tableWidth import tabWidth
@@ -47,7 +47,7 @@ class DataF1Table(QWidget):
 
         self.setObjectName("RedWid")
         self.gridStructure()
-        self.mainVariables()
+        self.sqlVariables()
         self.setMainTab()
         self.sideWEBtab()
         self.show()
@@ -70,11 +70,11 @@ class DataF1Table(QWidget):
         mygrid.addWidget(maintab, 0, 0)
         mygrid.addWidget(tabright, 0, 1)
         self.setLayout(mygrid)
-        self.goBack()
+        self.SQLmenu()
 
 
     # settings for the SQL menu
-    def mainVariables(self):
+    def sqlVariables(self):
         self.tablemade = False
         self.sortbool = False
         self.changer=""
@@ -133,11 +133,10 @@ class DataF1Table(QWidget):
 
         self.savelbl = QLabel()
         tabImage('saves', 1, self.savelbl)
-
         self.savedata = QPushButton("Create SQL Table")
         self.savedata.clicked.connect(self.saving)
-        self.mainwid.addWidget(self.savedata)
 
+        self.mainwid.addWidget(self.savedata)
         changeItems([self.savelbl, self.savedata]).Visibility(False)
 
         clearlab = QLabel()
@@ -163,10 +162,10 @@ class DataF1Table(QWidget):
             changeItems([self.savedata,self.savelbl]).Visibility(True)
             links, var, self.tabheader, cols, numbers = loadingData(datatype)
 
-            for sector in links:
-                table = WebScrape(calendar, sector)
+            for category in links:
+                table = WebScrape(calendar, category)
                 progressload(self.loadtab,10).activate()
-                self.content, rows = getRaceData(table,datatype,var,numbers,sector)
+                self.content, rows = getRaceData(table,datatype,var,numbers,category)
 
             if self.tablemade != False:
                 self.tablay.removeWidget(self.tabwid)
@@ -185,11 +184,19 @@ class DataF1Table(QWidget):
             tabHeight(self, rows, self.sortbool)
             tabWidth(self,self.table,self.titel,self.scroll,self.tabwid)
 
-        self.goBack()
+        self.SQLmenu()
+
+
+    # save table data as SQL file
+    def saving(self):
+        name = (self.titletext.replace(" for the ", "_")).replace(" ", "_")
+        ask = SQLsave(self, name, self.content, self.tabheader)
+        if ask == True:
+            self.SQLmenu()
 
 
     # open the SQL menu
-    def goBack(self):
+    def SQLmenu(self):
         changeLay(self.innerlay).clearLay()
         buttons = backtoSQL(self.innerlay)
         for btn in buttons:
@@ -219,7 +226,7 @@ class DataF1Table(QWidget):
         sqlbtn = QPushButton("Load SQL Table")
         sqlbtn.clicked.connect(lambda:self.getSQLtab(allcontent,listname))
         backbtn = QPushButton("Back to Menu")
-        backbtn.clicked.connect(self.goBack)
+        backbtn.clicked.connect(self.SQLmenu)
         clearlbl = QLabel()
 
         addtoInnerLay = [twolinewid,sqlbtn,backbtn,clearlbl,self.eraselbl,self.erase]
@@ -244,7 +251,7 @@ class DataF1Table(QWidget):
             if self.tablemade != False:
                 self.tablay.removeWidget(self.tabwid)
 
-            cellsdata,vertic,rows = listSetRows(self.currtab)
+            cellsdata,vertic,rows = setRows(self.currtab)
             colname,cols = setSQLheader(self.currtab)
             self.makeTable(cols,rows)
 
@@ -303,17 +310,9 @@ class DataF1Table(QWidget):
     def deletion(self):
         ask = eraseTab(self,self.currtab)
         if ask==True:
-            self.goBack()
+            self.SQLmenu()
             self.changer=""
             changeLay(self.sortlay).clearLay()
-
-
-    # save table data as SQL file
-    def saving(self):
-        name = (self.titletext.replace(" for the ", "_")).replace(" ", "_")
-        ask = SQLsave(self, name, self.content, self.tabheader)
-        if ask == True:
-            self.goBack()
 
 
 if __name__ == '__main__':

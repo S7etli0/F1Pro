@@ -1,7 +1,7 @@
 from F1.mySQL import startSQL
 
 
-# sort the data from the table
+# make list to sort the data from the table
 def sortData(tabname,colname,way):
     mydb,curs = startSQL(False)
     listcheck = ["date","order","points"]

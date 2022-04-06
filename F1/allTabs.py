@@ -1,7 +1,7 @@
 from F1.mySQL import startSQL
 
 
-# collect the names of SQL tables in the chosen category
+# list the names of SQL tables in the chosen category
 def openTab(category):
     mydb, curs = startSQL(True)
     curs.execute("SHOW TABLES")
