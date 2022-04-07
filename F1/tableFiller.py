@@ -19,6 +19,7 @@ def fillTable(table, filler, myheader, vertic):
             if rw % 2 == 0:
                 table.item(rw, cl).setBackground(color)
 
+    # formatting the H and V headers
     header = table.horizontalHeader()
     header.setFixedHeight(40)
     table.setHorizontalHeaderLabels(myheader)

@@ -1,4 +1,4 @@
-# adjust the table width & other items
+# adjust the width of tab widgets
 class layWidth():
     def __init__(self,table):
         self.table = table
@@ -11,7 +11,7 @@ class layWidth():
             max += self.table.columnWidth(j)
         return max
 
-    # adjust the width of the app lay
+    # width of the main widget
     def fixedWidth(self, lay, scroll, tabwid, max):
         lay.setGeometry(100, 100, 0, 0)
         if max <= 670:

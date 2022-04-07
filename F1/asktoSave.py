@@ -23,6 +23,7 @@ def SQLsave(self, name, content, tabheader):
             if category in clear:
                 alltables.append(clear)
 
+        # send data to create SQL file
         if name not in alltables:
             createSQL(self, name, content, tabheader)
             ask = True

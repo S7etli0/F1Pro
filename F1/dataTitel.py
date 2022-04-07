@@ -1,4 +1,4 @@
-# change the title of the table widget
+# change the title of the SQL menu
 def sqlTitel(currtab):
     mytitle = currtab.split("_")
 

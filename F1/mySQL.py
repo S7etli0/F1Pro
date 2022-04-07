@@ -16,7 +16,7 @@ def startSQL(check):
         password=data["password"]
     )
 
-    db = "formula1db"
+    db = data["db"]
     if check == True:
         curs = mydb.cursor()
         curs.execute("CREATE DATABASE IF NOT EXISTS "+db)
