@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QLabel, QPushButton
 
 # open the SQL menu & choose a category
 def backtoSQL(innerlay):
+
     sqltitel = QLabel("Choose a Table Category")
     sqltitel.setObjectName("BlackLab")
     sqltitel.setAlignment(Qt.AlignCenter)

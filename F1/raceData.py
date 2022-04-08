@@ -2,14 +2,14 @@ from F1.teams import TeamContent
 
 
 # make list to prepare the scraped data for input in the table
-def getRaceData(table,data,var,numbers,sector,num = 0):
+def getRaceData(table,data,var,numbers,sector,num=0):
     content,vertic = [],[]
 
     for tabrow in table:
-        num = str(num+1)
+        num = num+1
         racelist = tabrow.text.strip().replace("     ", "").split("\n")
         racelist = list(filter(lambda x: x != '', racelist))
-        vertic.append(num)
+        vertic.append(str(num))
 
         while len(racelist) < var:
             racelist.append("")

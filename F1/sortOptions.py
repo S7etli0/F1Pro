@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QLabel, QRadioButton, QPushButton
 def sortItems():
     order = QLabel("Order by:")
     order.setObjectName("RedLab")
+
     asc = QRadioButton("ASC")
     asc.setChecked(True)
     des = QRadioButton("DESC")

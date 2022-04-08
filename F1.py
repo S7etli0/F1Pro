@@ -70,7 +70,7 @@ class DataF1Table(QWidget):
         mygrid.addWidget(maintab, 0, 0)
         mygrid.addWidget(tabright, 0, 1)
         self.setLayout(mygrid)
-        self.SQLmenu()
+        self.SQLmenu(self.innerlay)
 
 
     # settings for the SQL menu
@@ -82,7 +82,7 @@ class DataF1Table(QWidget):
         self.eraselbl = QLabel()
         tabImage('btn-del', 1, self.eraselbl)
         self.erase = QPushButton("Erase SQL Table")
-        self.erase.clicked.connect(lambda:self.alterSQLtab(False))
+        self.erase.clicked.connect(lambda:self.alterSQLdb(False,self.innerlay))
 
         self.sortwid,self.sortlay = layinWidget("H")
         self.sortwid.setObjectName("BlackWid")
@@ -135,7 +135,7 @@ class DataF1Table(QWidget):
         self.savelbl = QLabel()
         tabImage('saves', 1, self.savelbl)
         self.savedata = QPushButton("Create SQL Table")
-        self.savedata.clicked.connect(lambda:self.alterSQLtab(True))
+        self.savedata.clicked.connect(lambda:self.alterSQLdb(True,self.innerlay))
 
         self.mainwid.addWidget(self.savedata)
         changeItems([self.savelbl, self.savedata]).Visibility(False)
@@ -182,17 +182,17 @@ class DataF1Table(QWidget):
             tabHeight(self, rows, self.sortbool)
             tabWidth(self,self.table,self.titel,self.scroll,self.tabwid)
 
-        self.SQLmenu()
+        self.SQLmenu(self.innerlay)
 
 
     # open the SQL menu
-    def SQLmenu(self):
+    def SQLmenu(self,innerlay):
 
-        changeLay(self.innerlay).clearLay()
-        buttons = backtoSQL(self.innerlay)
+        changeLay(innerlay).clearLay()
+        buttons = backtoSQL(innerlay)
         for btn in buttons:
             btn.clicked.connect(self.getList)
-        changeLay(self.innerlay).stretchLay()
+        changeLay(innerlay).stretchLay()
 
 
     # layout for the chosen SQL files category
@@ -217,13 +217,13 @@ class DataF1Table(QWidget):
         sqlbtn = QPushButton("Load SQL Table")
         sqlbtn.clicked.connect(lambda:self.getSQLtab(allcontent,listname))
         backbtn = QPushButton("Back to Menu")
-        backbtn.clicked.connect(self.SQLmenu)
+        backbtn.clicked.connect(lambda:self.SQLmenu(self.innerlay))
         clearlbl = QLabel()
 
         addtoInnerLay = [twolinewid,sqlbtn,backbtn,clearlbl,self.eraselbl,self.erase]
         changeItems(addtoInnerLay).AddingItems(self.innerlay)
 
-        changeItems([self.eraselbl, self.erase]).Visibility( False)
+        changeItems([self.eraselbl, self.erase]).Visibility(False)
         changeLay(self.innerlay).stretchLay()
 
 
@@ -299,7 +299,7 @@ class DataF1Table(QWidget):
 
 
     # delete or save a SQL file
-    def alterSQLtab(self,check):
+    def alterSQLdb(self,check,innerlay):
 
         if check:
             name = (self.titletext.replace(" for the ", "_")).replace(" ", "_")
@@ -310,7 +310,7 @@ class DataF1Table(QWidget):
                 self.changer = ""
                 changeLay(self.sortlay).clearLay()
         if ask:
-            self.SQLmenu()
+            self.SQLmenu(innerlay)
 
 
 if __name__ == '__main__':

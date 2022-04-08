@@ -9,7 +9,6 @@ data = readConfig(file,section)
 
 
 def startSQL(check):
-
     mydb = con.connect(
         host=data["host"],
         user=data["user"],
