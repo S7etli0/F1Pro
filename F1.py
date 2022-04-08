@@ -82,7 +82,7 @@ class DataF1Table(QWidget):
         self.eraselbl = QLabel()
         tabImage('btn-del', 1, self.eraselbl)
         self.erase = QPushButton("Erase SQL Table")
-        self.erase.clicked.connect(lambda:self.deletion())
+        self.erase.clicked.connect(lambda:self.alterSQLtab(False))
 
         self.sortwid,self.sortlay = layinWidget("H")
         self.sortwid.setObjectName("BlackWid")
@@ -109,6 +109,7 @@ class DataF1Table(QWidget):
 
     # menu for scraping data about F1
     def sideWEBtab(self):
+
         loadlabl = QLabel("Scrape Data from the Website")
         loadlabl.setObjectName("BlackLab")
         loadlabl.setAlignment(Qt.AlignCenter)
@@ -134,7 +135,7 @@ class DataF1Table(QWidget):
         self.savelbl = QLabel()
         tabImage('saves', 1, self.savelbl)
         self.savedata = QPushButton("Create SQL Table")
-        self.savedata.clicked.connect(self.saving)
+        self.savedata.clicked.connect(lambda:self.alterSQLtab(True))
 
         self.mainwid.addWidget(self.savedata)
         changeItems([self.savelbl, self.savedata]).Visibility(False)
@@ -147,10 +148,11 @@ class DataF1Table(QWidget):
 
     # extract data from the F1 website and placing it in a table
     def race_results(self):
+
         self.changer = ""
-        if self.sortbool == True:
-            changeLay(self.sortlay).clearLay()
+        if self.sortbool:
             self.sortbool = False
+            changeLay(self.sortlay).clearLay()
             changeItems([self.sortwid, self.erase,self.eraselbl]).Visibility(False)
 
         calendar = int(self.spinyear.text())
@@ -165,9 +167,9 @@ class DataF1Table(QWidget):
             for category in links:
                 table = WebScrape(calendar, category)
                 progressload(self.loadtab,10).activate()
-                self.content, rows = getRaceData(table,datatype,var,numbers,category)
+                self.content, rows, vertic = getRaceData(table,datatype,var,numbers,category)
 
-            if self.tablemade != False:
+            if self.tablemade:
                 self.tablay.removeWidget(self.tabwid)
             self.makeTable(cols,rows)
             self.tabwid.setObjectName("BlackWid")
@@ -176,10 +178,6 @@ class DataF1Table(QWidget):
             self.titletext = datatype.title() + " for the " + str(calendar)
             self.titel.setText("List of the " + self.titletext + " Formula 1 Season")
 
-            vertic = []
-            for i in range(rows):
-                vertic.append(str(i + 1))
-
             fillTable(self.table, self.content, self.tabheader, vertic)
             tabHeight(self, rows, self.sortbool)
             tabWidth(self,self.table,self.titel,self.scroll,self.tabwid)
@@ -187,16 +185,9 @@ class DataF1Table(QWidget):
         self.SQLmenu()
 
 
-    # save table data as SQL file
-    def saving(self):
-        name = (self.titletext.replace(" for the ", "_")).replace(" ", "_")
-        ask = SQLsave(self, name, self.content, self.tabheader)
-        if ask == True:
-            self.SQLmenu()
-
-
     # open the SQL menu
     def SQLmenu(self):
+
         changeLay(self.innerlay).clearLay()
         buttons = backtoSQL(self.innerlay)
         for btn in buttons:
@@ -237,7 +228,7 @@ class DataF1Table(QWidget):
 
 
     # opening a saved SQL file in the table
-    def getSQLtab(self,allcontent,listname):
+    def getSQLtab(self, allcontent, listname):
 
         if self.sortbool != True:
             self.sortbool = True
@@ -248,7 +239,7 @@ class DataF1Table(QWidget):
         else:
             self.currtab = listname + "_" + str(self.yearlist.currentText())
 
-            if self.tablemade != False:
+            if self.tablemade:
                 self.tablay.removeWidget(self.tabwid)
 
             cellsdata,vertic,rows = setRows(self.currtab)
@@ -286,8 +277,9 @@ class DataF1Table(QWidget):
 
     # adjust a new table to the mainwidget
     def makeTable(self,cols,rows):
+
         self.tablemade = True
-        self.table, self.tabwid, self.form, self.scroll = setTable(cols,rows)
+        self.table, self.tabwid, self.scroll = setTable(cols,rows)
         self.tablay.addWidget(self.tabwid)
         tabHeight(self, rows, self.sortbool)
 
@@ -306,13 +298,19 @@ class DataF1Table(QWidget):
         fillTable(self.table, cellsdata, colname, vertic)
 
 
-    # delete a saved SQL file
-    def deletion(self):
-        ask = eraseTab(self,self.currtab)
-        if ask==True:
+    # delete or save a SQL file
+    def alterSQLtab(self,check):
+
+        if check:
+            name = (self.titletext.replace(" for the ", "_")).replace(" ", "_")
+            ask = SQLsave(self, name, self.content, self.tabheader)
+        else:
+            ask = eraseTab(self, self.currtab)
+            if ask:
+                self.changer = ""
+                changeLay(self.sortlay).clearLay()
+        if ask:
             self.SQLmenu()
-            self.changer=""
-            changeLay(self.sortlay).clearLay()
 
 
 if __name__ == '__main__':
