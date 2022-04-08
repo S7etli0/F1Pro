@@ -5,6 +5,7 @@ from F1.newWidget import layinWidget
 
 # create a table to display the data
 def setTable(cols,rows):
+
     table = QTableWidget()
     table.setRowCount(rows)
     table.setColumnCount(cols)
@@ -18,4 +19,4 @@ def setTable(cols,rows):
     form.addWidget(scroll)
     scroll.setVisible(False)
 
-    return table, tabwid, form, scroll
+    return table, tabwid, scroll
