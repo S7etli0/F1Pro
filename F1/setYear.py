@@ -10,7 +10,7 @@ def setYearLbl(lay):
 
     spinyear = QSpinBox()
     year = datetime.datetime.now().strftime("%Y")
-    spinyear.setRange(1950, int(year) - 1)
+    spinyear.setRange(1950, int(year))
 
     changeItems([spinlbl,spinyear]).AddingItems(lay)
 

@@ -5,17 +5,22 @@ class TeamContent():
 
     # dictionary with the teams and their drivers
     def Drivers(self,racelist):
-        if racelist[5] not in self.numbers:
-            self.numbers[racelist[5]] = str(racelist[1]) + " " + str(racelist[2])
-        else:
-            self.numbers[racelist[5]] += " & " + str(racelist[1]) + " " + str(racelist[2])
+        check = racelist[5]
+
+        if check not in self.numbers:
+            self.numbers[check] = str(racelist[1]) + " " + str(racelist[2])
+        elif len(self.numbers[check].split('&'))<3:
+            self.numbers[check] += " & " + str(racelist[1]) + " " + str(racelist[2])
+
         return self.numbers
 
     # add teams data and data from the dictionary
     def Teams(self,racelist,rowdatas):
-        rowdatas.append(racelist[1])
-        if racelist[1] in self.numbers:
-            rowdatas.append(self.numbers[str(racelist[1])])
+        check = racelist[1]
+
+        rowdatas.append(check)
+        if check in self.numbers:
+            rowdatas.append(self.numbers[str(check)])
         else:
             rowdatas.append("")
         rowdatas.append(racelist[2])

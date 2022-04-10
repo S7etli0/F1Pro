@@ -161,26 +161,32 @@ class DataF1Table(QWidget):
         if datatype == "team ranks" and calendar < 1958:
             QMessageBox.about(self, "Data Error", "No team Competitions before 1958!")
         else:
-            changeItems([self.savedata,self.savelbl]).Visibility(True)
             links, var, self.tabheader, cols, numbers = loadingData(datatype)
 
             for category in links:
                 table = WebScrape(calendar, category)
-                progressload(self.loadtab,10).activate()
-                self.content, rows, vertic = getRaceData(table,datatype,var,numbers,category)
+                if len(table) != 0:
+                    progressload(self.loadtab,10).activate()
+                    self.content, rows, vertic = getRaceData(table,datatype,var,numbers,category)
 
-            if self.tablemade:
-                self.tablay.removeWidget(self.tabwid)
-            self.makeTable(cols,rows)
-            self.tabwid.setObjectName("BlackWid")
+            if len(table) != 0:
+                changeItems([self.savedata, self.savelbl]).Visibility(True)
 
-            tabImage(datatype.replace(" ", "-"), 2, self.introlbl)
-            self.titletext = datatype.title() + " for the " + str(calendar)
-            self.titel.setText("List of the " + self.titletext + " Formula 1 Season")
+                if self.tablemade:
+                    self.tablay.removeWidget(self.tabwid)
+                self.makeTable(cols, rows)
+                self.tabwid.setObjectName("BlackWid")
 
-            fillTable(self.table, self.content, self.tabheader, vertic)
-            tabHeight(self, rows, self.sortbool)
-            tabWidth(self,self.table,self.titel,self.scroll,self.tabwid)
+                tabImage(datatype.replace(" ", "-"), 2, self.introlbl)
+                self.titletext = datatype.title() + " for the " + str(calendar)
+                self.titel.setText("List of the " + self.titletext + " Formula 1 Season")
+
+                fillTable(self.table, self.content, self.tabheader, vertic)
+                tabHeight(self, rows, self.sortbool)
+                tabWidth(self, self.table, self.titel, self.scroll, self.tabwid)
+
+            else:
+                QMessageBox.about(self,"No data","No races were held yet!")
 
         self.SQLmenu(self.innerlay)
 

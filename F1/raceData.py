@@ -1,4 +1,5 @@
 from F1.teams import TeamContent
+from F1.weblist import getWebList
 
 
 # make list to prepare the scraped data for input in the table
@@ -23,8 +24,9 @@ def getRaceData(table,data,var,numbers,sector,num=0):
                 content.append(teaminfo)
 
         else:
-            for cell in numbers:
-                rowdatas.append(racelist[cell])
+            rowdatas = getWebList(numbers,data,racelist,rowdatas)
             content.append(rowdatas)
-    
+
     return content, len(content), vertic
+
+
