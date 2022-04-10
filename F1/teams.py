@@ -17,11 +17,19 @@ class TeamContent():
     # add teams data and data from the dictionary
     def Teams(self,racelist,rowdatas):
         check = racelist[1]
-
         rowdatas.append(check)
+
         if check in self.numbers:
-            rowdatas.append(self.numbers[str(check)])
+            drivers = (self.numbers[str(check)]).split(" & ")
+            while len(drivers) != 3:
+                drivers.append("None")
+
+            for i in range(len(drivers)):
+                rowdatas.append(drivers[i])
         else:
-            rowdatas.append("")
+            for i in range(3):
+                rowdatas.append("None")
+
         rowdatas.append(racelist[2])
+
         return rowdatas

@@ -22,7 +22,7 @@ def loadingData(data):
         links = ['drivers', 'team']
         var = 3
         numbers = {}
-        tabheader = ['team_name', 'full_drivers_list', 'all_points']
+        tabheader = ['team_name', 'driver_1', 'driver_2', 'driver_3', 'all_points']
 
     cols = len(tabheader)
 

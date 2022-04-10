@@ -4,11 +4,11 @@ from F1.mySQL import startSQL
 # make list to sort the data from the table
 def sortData(tabname,colname,way):
     mydb,curs = startSQL(False)
-    listcheck = ["date","order","points"]
+    listcheck = ["full_date","order","all_points"]
 
     if colname in listcheck:
         direct = "id"
-    elif colname == "laps":
+    elif colname == "race_laps":
         direct = "ABS(" + colname + ")"
     else:
         direct = colname

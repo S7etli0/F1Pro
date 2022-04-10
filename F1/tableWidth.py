@@ -12,7 +12,7 @@ def tabWidth(self,table,titel,scroll,tabwid):
     max = layWidth(table).sections(tabcol)
 
     if 'Team' in titel:
-        header.setSectionResizeMode(1, QHeaderView.Stretch)
+        header.setSectionResizeMode(0, QHeaderView.Stretch)
         header.setStretchLastSection(False)
 
     else:

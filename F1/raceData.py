@@ -28,5 +28,3 @@ def getRaceData(table,data,var,numbers,sector,num=0):
             content.append(rowdatas)
 
     return content, len(content), vertic
-
-

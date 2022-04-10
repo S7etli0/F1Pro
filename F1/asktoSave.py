@@ -4,7 +4,7 @@ from F1.mySQL import startSQL
 
 
 # ask to save and check if the file exists
-def SQLsave(self, name, content, tabheader):
+def SQLsave(self, name, content, tabheader, limit):
 
     z = len(name)
     name = str(name).lower()
@@ -24,12 +24,15 @@ def SQLsave(self, name, content, tabheader):
                 alltables.append(clear)
 
         # send data to create SQL file
+        ask = False
         if name not in alltables:
-            createSQL(self, name, content, tabheader)
-            ask = True
+            if str(limit) not in name:
+                createSQL(self, name, content, tabheader)
+                ask = True
+            else:
+                QMessageBox.about(self, "SQL error", "Can't save, season still in progress!")
         else:
             QMessageBox.about(self, "SQL error", "Table " + name + " is already in the database!")
-            ask = False
     else:
         ask = False
 

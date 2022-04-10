@@ -14,4 +14,4 @@ def setYearLbl(lay):
 
     changeItems([spinlbl,spinyear]).AddingItems(lay)
 
-    return spinlbl,spinyear
+    return spinlbl, spinyear, year

@@ -117,7 +117,7 @@ class DataF1Table(QWidget):
         tabImage('menu', 3, self.layload)
 
         firstrow = QHBoxLayout()
-        self.spinlbl,self.spinyear = setYearLbl(firstrow)
+        self.spinlbl,self.spinyear,self.limit = setYearLbl(firstrow)
 
         secrow = QHBoxLayout()
         sections = ['calendar', 'race wins', 'driver ranks', 'team ranks']
@@ -309,7 +309,7 @@ class DataF1Table(QWidget):
 
         if check:
             name = (self.titletext.replace(" for the ", "_")).replace(" ", "_")
-            ask = SQLsave(self, name, self.content, self.tabheader)
+            ask = SQLsave(self, name, self.content, self.tabheader, self.limit)
         else:
             ask = eraseTab(self, self.currtab)
             if ask:
